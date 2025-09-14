@@ -1,6 +1,6 @@
 
 
-###**Stella Team's Suspense Crime Investigation Interactive Game**###
+<h3>**Stella Team's Suspense Crime Investigation Interactive Game**</h3>
 
 
 <img width="600" height="300" alt="图片1" src="https://github.com/user-attachments/assets/97ecb4cf-9c52-4344-9f01-bf8fedcd798e" />

@@ -5,7 +5,7 @@
 
 <img width="600" height="300" alt="图片1" src="https://github.com/user-attachments/assets/97ecb4cf-9c52-4344-9f01-bf8fedcd798e" />
 
-<h2>group logo</h2>
+<h2>Project logo</h2>
 
 
 ![84ce8d52666e940c836b0a32b1c318ad](https://github.com/user-attachments/assets/5ae8cd6b-8b5c-40c9-b7a5-3b0e265a3b6f)

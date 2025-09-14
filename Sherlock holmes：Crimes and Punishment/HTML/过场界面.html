@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sherloc Holmes：Crimes and Punishment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital@0;1&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #d8d8d8;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Lora', serif;
+            position: relative;
+        }
+        
+        /* 背景纹理 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(66, 26, 26, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(26, 26, 66, 0.1) 0%, transparent 40%),
+                repeating-linear-gradient(45deg, #0a0a0a 0px, #0a0a0a 1px, #0f0f0f 1px, #0f0f0f 2px);
+            z-index: -1;
+        }
+        
+        /* 开发人员提示界面 */
+        #dev-notes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(5, 5, 5, 0.95);
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 1.8s ease;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .notes-content {
+            max-width: 800px;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+        
+        .notes-content h2 {
+            color: #c8a54e;
+            margin-bottom: 40px;
+            font-size: 36px;
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px rgba(200, 165, 78, 0.4);
+            position: relative;
+            padding-bottom: 15px;
+            opacity: 0;
+            animation: fadeIn 1.5s 0.5s forwards;
+        }
+        
+        .notes-content h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 30%;
+            width: 40%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #c8a54e, transparent);
+        }
+        
+        .notes-content p {
+            margin: 25px 0;
+            line-height: 1.6;
+            font-size: 20px;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            font-style: italic;
+            color: #b8b8b8;
+        }
+        
+        .notes-content p:nth-child(2) {
+            animation-delay: 1.5s;
+        }
+        
+        .notes-content p:nth-child(3) {
+            animation-delay: 3s;
+        }
+        
+        .notes-content p:nth-child(4) {
+            animation-delay: 4.5s;
+        }
+        
+        .notes-content p:nth-child(5) {
+            animation-delay: 6s;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 0.9;
+            }
+        }
+        
+        .continue-prompt {
+            margin-top: 50px;
+            font-size: 18px;
+            color: #8a7575;
+            opacity: 0;
+            animation: fadeIn 1.5s 7.5s forwards, pulse 3s infinite;
+            letter-spacing: 1px;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.5; }
+        }
+        
+        /* Logo展示界面 */
+        #logo-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            z-index: 90;
+            opacity: 0;
+            pointer-events: none;
+            flex-direction: column;
+        }
+        
+        .logo-container {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logo-wrapper {
+            width: 80%;
+            max-width: 600px;
+            height: 70%;
+            margin: 0 auto;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.8);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 移除了虚线边框 */
+        }
+        
+        .logo-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #8a7575;
+            font-size: 16px;
+            text-align: center;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        
+        .logo-image:before {
+            content: "点击下方按钮上传Logo";
+            position: absolute;
+            font-style: italic;
+        }
+        
+        .logo-image img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            z-index: 2;
+            position: relative;
+        }
+        
+        #logo-upload {
+            margin-top: 30px;
+            color: #c8a54e;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 4px;
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid #3a3a3a;
+            transition: all 0.3s ease;
+            z-index: 3;
+            position: relative;
+        }
+        
+        #logo-upload:hover {
+            color: #e0c070;
+            background: rgba(30, 30, 30, 0.8);
+            border-color: #c8a54e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        #logo-file {
+            display: none;
+        }
+        
+        .logo-subtitle {
+            font-size: 24px;
+            color: #8a7575;
+            margin-top: 30px;
+            opacity: 0;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            letter-spacing: 3px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .notes-content {
+                width: 90%;
+            }
+            
+            .notes-content h2 {
+                font-size: 28px;
+            }
+            
+            .notes-content p {
+                font-size: 18px;
+            }
+            
+            .logo-wrapper {
+                width: 90%;
+                height: 60%;
+            }
+            
+            .logo-subtitle {
+                font-size: 20px;
+            }
+            
+            .logo-image:before {
+                content: "上传Logo";
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 开发人员提示界面 -->
+    <div id="dev-notes">
+        <div class="notes-content">
+            <h2>调查员须知</h2>
+            <p>本游戏包含令人不安的内容与情节</p >
+            <p>未成年人请谨慎游玩</p>
+            <p>建议在心理准备充足的情况下进行游戏</p >
+            <p>黑暗中隐藏着真相，但也潜伏着危险</p >
+            <p>祝您好运，侦探先生/女士</p >
+            <div class="continue-prompt">[点击屏幕继续]</div>
+        </div>
+    </div>
+    
+    <!-- Logo展示界面 -->
+    <div id="logo-screen">
+        <div class="logo-container">
+            <div class="logo-wrapper">
+                <div class="logo-image" id="logo-display">
+                    <img src="../Image/84ce8d52666e940c836b0a32b1c318ad.jpg">
+                </div>
+            </div>
+            <label id="logo-upload">团队制作</label>
+            <input type="file" id="logo-file" accept="image/*">
+            <div class="logo-subtitle">STELLA </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const devNotes = document.getElementById('dev-notes');
+            const logoScreen = document.getElementById('logo-screen');
+            const continuePrompt = document.querySelector('.continue-prompt');
+            const logoWrapper = document.querySelector('.logo-wrapper');
+            const logoSubtitle = document.querySelector('.logo-subtitle');
+            const logoUpload = document.getElementById('logo-upload');
+            const logoFile = document.getElementById('logo-file');
+            const logoDisplay = document.getElementById('logo-display');
+            
+            // 初始显示开发人员提示
+            setTimeout(() => {
+                continuePrompt.style.display = 'block';
+            }, 8000);
+            
+            // 点击屏幕继续
+            document.addEventListener('click', handleClick);
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // Logo上传功能
+            logoUpload.addEventListener('click', function() {
+                logoFile.click();
+            });
+            
+            logoFile.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        logoDisplay.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        
+                        // 添加图片加载完成后的回调
+                        img.onload = function() {
+                            // 根据图片比例调整容器大小
+                            adjustLogoContainer(img.width, img.height);
+                        };
+                        
+                        logoDisplay.appendChild(img);
+                    };
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            // 根据图片比例调整容器大小
+            function adjustLogoContainer(imgWidth, imgHeight) {
+                const aspectRatio = imgWidth / imgHeight;
+                const containerWidth = logoWrapper.offsetWidth;
+                
+                // 限制最大高度为屏幕的70%
+                const maxHeight = window.innerHeight * 0.7;
+                let newHeight = containerWidth / aspectRatio;
+                
+                // 如果计算出的高度超过最大高度，则重新计算宽度
+                if (newHeight > maxHeight) {
+                    newHeight = maxHeight;
+                    const newWidth = newHeight * aspectRatio;
+                    logoWrapper.style.width = `${newWidth}px`;
+                } else {
+                    logoWrapper.style.height = `${newHeight}px`;
+                }
+            }
+            
+            function handleClick() {
+                document.removeEventListener('click', handleClick);
+                document.removeEventListener('keydown', handleKeyPress);
+                startSequence();
+            }
+            
+            function handleKeyPress(e) {
+                if (e.code === 'Space' || e.code === 'Enter') {
+                    document.removeEventListener('click', handleClick);
+                    document.removeEventListener('keydown', handleKeyPress);
+                    startSequence();
+                }
+            }
+            
+            function startSequence() {
+                // 淡出开发人员提示
+                devNotes.style.opacity = '0';
+                
+                // 显示Logo界面
+                setTimeout(() => {
+                    devNotes.style.display = 'none';
+                    logoScreen.style.opacity = '1';
+                    logoScreen.style.pointerEvents = 'auto';
+                    
+                    // Logo动画
+                    setTimeout(() => {
+                        logoWrapper.style.opacity = '1';
+                        logoWrapper.style.transform = 'scale(1)';
+                        logoWrapper.style.transition = 'opacity 2s ease, transform 2s ease';
+                        
+                        // Logo副标题动画
+                        setTimeout(() => {
+                            logoSubtitle.style.opacity = '0.8';
+                            logoSubtitle.style.transition = 'opacity 2s ease';
+                            
+                            // 显示上传按钮
+                            setTimeout(() => {
+                                logoUpload.style.opacity = '1';
+                                logoUpload.style.transition = 'opacity 1.5s ease';
+                                
+                                // 最终淡出，准备进入主界面
+                                setTimeout(() => {
+                                    logoScreen.style.opacity = '0';
+                                    logoScreen.style.transition = 'opacity 2.5s ease';
+                                    
+                                    // 这里可以添加回调函数或事件触发，通知主界面开始显示
+                                    setTimeout(() => {
+                                        // 实际应用中，这里会触发自定义事件或调用主界面的显示函数
+                                        console.log("开场动画结束，现在将进入主界面");
+                                    }, 2500);
+                                }, 5000);
+                            }, 2000);
+                        }, 2000);
+                    }, 500);
+                }, 1800);
+            }
+            
+            // 窗口大小变化时重新调整Logo容器
+            window.addEventListener('resize', function() {
+                const img = logoDisplay.querySelector('img');
+                if (img && img.complete) {
+                    adjustLogoContainer(img.width, img.height);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

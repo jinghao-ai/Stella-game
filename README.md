@@ -1,14 +1,10 @@
-好的，我可以帮你将内容编排成适合GitHub`README.md`的格式，并适当加入一些图案来增强可读性。以下是编排后的版本：
-
-
----
-
-
 
 Stella Team's Suspense Crime Investigation Interactive Game
 
 
-![Game Banner](https://via.placeholder.com/600x300?text=Sherlock+Holmes:+Crimes+and+Punishment)
+![Game Banner]
+ceholder.com/600x300?text=Sherlo<img width="600" height="300" alt="图片1" src="https://github.com/user-attachments/assets/150489c3-0f1a-4120-8003-53bb3101d7ca" />
+ck+Holmes:+Crimes+and+Punishment)
 
 
 

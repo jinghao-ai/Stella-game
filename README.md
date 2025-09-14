@@ -1,35 +1,40 @@
 
 
-<h3>**Stella Team's Suspense Crime Investigation Interactive Game**</h3>
+**<h1>Stella Team's Suspense Crime Investigation Interactive Game</h1>**
 
 
 <img width="600" height="300" alt="图片1" src="https://github.com/user-attachments/assets/97ecb4cf-9c52-4344-9f01-bf8fedcd798e" />
 
+<h2>group logo</h2>
+
+
+![84ce8d52666e940c836b0a32b1c318ad](https://github.com/user-attachments/assets/5ae8cd6b-8b5c-40c9-b7a5-3b0e265a3b6f)
 
 
 
+---
 
-Project Plan
+<h2>Project Plan</h2>
 
-By:Stella Team
+<h3>By:Stella Team</h3>
 
-Members and Roles:
-
-
-• Zhang Jinghao:Project Planning,Programming,Background Music Composition
-
-• Jin Yikun:Programming
-
-• Dong Zequan:Programming,Version Control
-
-• Miao Xintian:Artwork
-
-• Hu Yifan:Architect
-
-• Chen Yiming:Testing
+<h3>Members and Roles:</h3>
 
 
-Table of Contents
+• ***Zhang Jinghao:Project Planning,Programming,Background Music Composition***
+
+• ***Jin Yikun:Programming***
+
+• ***Dong Zequan:Programming,Version Control***
+
+• ***Miao Xintian:Artwork***
+
+• ***Hu Yifan:Architect***
+
+• ***Chen Yiming:Testing***
+
+---
+<h3>Table of Contents</h3>
 
 
 • [Project Overview](#1-project-overview)
@@ -113,24 +118,24 @@ Table of Contents
 
 
 
-1.Project Overview
+<h2>1.Project Overview</h2>
 
 
-1.1 Project Name
+<h3>1.1 Project Name</h3>
 
 Sherlock Holmes:Crimes and Punishment Simplified Edition
 
 The Stella team adapts the classic detective genre into a 2D text-based interactive game,recreating the mystery-solving experience ofThe Black Peter CaseandThe Disappearing Train Caseon a web platform.
 
 
-1.2 Project Type
+<h3>1.2 Project Type</h3>
 
 Mystery Investigation Interactive Game
 
 A mystery investigation interactive game,presented in a web-based format combining text interaction with simple 2D illustrations.The core gameplay involves reading case details,selecting reasoning paths,collecting clues,and ultimately solving the mystery and making judgments.
 
 
-1.3 Project Origin and Inspiration
+<h3>1.3 Project Origin and Inspiration</h3>
 
 
 <img width="559" height="287" alt="图片2" src="https://github.com/user-attachments/assets/0d9d4ff0-a133-4e46-95d3-6e7f73bd5ba5" />
@@ -144,18 +149,18 @@ The inspiration primarily comes fromSherlock Holmes:Crimes and Punishmentsby Fro
 
 
 
-2.Project Content Design
+<h2>2.Project Content Design</h2>
 
 
-2.1 Plot Design
+<h3>2.1 Plot Design</h3>
 
 
-2.1.1 Background
+<h3>2.1.1 Background</h3>
 
 The game is set in Victorian-era London.Players take on the role of Sherlock Holmes,working with Dr.Watson to investigate bizarre cases.
 
 
-2.1.2 The Black Peter Case
+<h3>2.1.2 The Black Peter Case</h3>
 
 
 <img width="575" height="362" alt="图片3" src="https://github.com/user-attachments/assets/064aa46f-67de-4f6e-b9a2-8a95819a869b" />
@@ -165,20 +170,18 @@ The game is set in Victorian-era London.Players take on the role of Sherlock Hol
 Black Peter is a retired whaling captain with a violent temper,living in a country cottage.One day,he is found dead in his study,with a whaling harpoon embedded in his back.Players need to investigate the crime scene,collect clues,and converse with suspects to deduce the truth.
 
 
-2.1.3 The Disappearing Train Case
+<h3>2.1.3 The Disappearing Train Case</h3>
 
-
-<img width="610" height="481" alt="图片4" src="https://github.com/user-attachments/assets/12d13d39-cc37-4986-bd37-2fd1ca285f22" />
 
 
 
 In this eerie case,a train vanishes en route.Players must visit railway companies,stations,and surrounding villages to find tracks of clues and uncover the conspiracy behind it.The case involves complex motives,testing players'logical reasoning and attention to detail.
 
 
-2.1.4 Ending Design
+<h3>2.1.4 Ending Design</h3>
 
+<img width="610" height="481" alt="图片4" src="https://github.com/user-attachments/assets/12d13d39-cc37-4986-bd37-2fd1ca285f22" />
 
-<img width="812" height="376" alt="图片5" src="https://github.com/user-attachments/assets/fde5acbf-f659-4dff-923d-2b0cb49842e5" />
 
 
 
@@ -192,33 +195,30 @@ Depending on the choices made by players during the investigation and the clues 
 • Incorrect reasoning by the player,resulting in a miscarriage of justice.
 
 
-2.2 Level Design
+<h2>2.2 Level Design</h2>
 
 
-2.2.1 Initial Level(Soft Tutorial)
+<h3>2.2.1 Initial Level(Soft Tutorial)</h3>
 
 The first level begins with The Black Peter Case,serving as a tutorial to help players become familiar with the investigation process and interaction methods.
 
 
-2.2.2 Subsequent Level Directions
+<h3>2.2.2 Subsequent Level Directions</h3>
 
 After completing The Black Peter Case,players will unlock The Disappearing Train Case,which features a more complex plot,more clues,and increased difficulty in reasoning.
 
 
-2.2.3 Diverse Puzzle Elements
+<h3>2.2.3 Diverse Puzzle Elements</h3>
 
-
-<img width="616" height="426" alt="图片6" src="https://github.com/user-attachments/assets/108237a5-a0a2-4fa6-8d14-c6117c0cd206" />
-
-
+<img width="812" height="376" alt="图片5" src="https://github.com/user-attachments/assets/fde5acbf-f659-4dff-923d-2b0cb49842e5" />
 
 Including logical reasoning in dialogues,clue puzzles,and timeline reconstruction to maintain playability.
 
 
-2.3 Interaction Design
+<h2>2.3 Interaction Design</h2>
 
 
-2.3.1 Dialogue System
+<h3>2.3.1 Dialogue System</h3>
 
 
 <img width="616" height="426" alt="图片6" src="https://github.com/user-attachments/assets/e519dd08-2495-404e-a403-0431907fcdaa" />
@@ -227,7 +227,7 @@ Including logical reasoning in dialogues,clue puzzles,and timeline reconstructio
 Dialogue is presented in a dialogue box format,accompanied by character portraits and emotional changes.
 
 
-2.3.2 Interactive Option Design
+<h3>2.3.2 Interactive Option Design</h3>
 
 Key nodes provide options,with different choices affecting the plot direction and case outcome.
 
@@ -236,10 +236,10 @@ Key nodes provide options,with different choices affecting the plot direction an
 
 
 
-3.Project Technology
+<h2>3.Project Technology</h2>
 
 
-3.1 Coding Techniques and Tools
+<h3>3.1 Coding Techniques and Tools</h3>
 
 
 <img width="960" height="303" alt="图片7" src="https://github.com/user-attachments/assets/6cd983aa-9e19-4d93-aff0-92c7304e15c2" />
@@ -249,12 +249,12 @@ Key nodes provide options,with different choices affecting the plot direction an
 Implemented usingHTML5+CSS3+JavaScript.Version control is handled withGit,and the IDE used isVS Code.
 
 
-3.2 Page Structure Design
+<h3>3.2 Page Structure Design</h3>
 
 Includes login/registration,main menu,case investigation interface,achievement system,etc.
 
 
-3.3 Site Map Design
+<h3>3.3 Site Map Design</h3>
 
 The main menu serves as the central hub,connecting the game plot,achievements,and settings interface.
 
@@ -263,10 +263,10 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 
 
 
-4.Work Schedule
+<h2>4.Work Schedule</h2>
 
 
-4.1 Time Schedule(Gantt Chart)
+<h3>4.1 Time Schedule(Gantt Chart)</h3>
 
 
 • Weeks 1-2:Requirements Analysis and Division of Labor
@@ -284,7 +284,7 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 • Week 12:Defense and Presentation
 
 
-4.2 Division of Labor
+<h3>4.2 Division of Labor</h3>
 
 
 • Zhang Jinghao:Planning,Programming
@@ -304,10 +304,10 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 
 
 
-5.Design Documents
+<h2>5.Design Documents</h2>
 
 
-5.1 Site Map
+<h3>5.1 Site Map</h3>
 
 
 
@@ -315,7 +315,7 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 • Login→Main Menu→Cases→Achievements/Settings
 
 
-5.2 Game Wireframes
+<h3>5.2 Game Wireframes</h3>
 
 
 
@@ -330,7 +330,7 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 • Achievements Page
 
 
-5.3 Design Specifications
+<h3>5.3 Design Specifications</h3>
 
 
 • Color Scheme:Dark blue,black,and red to create a suspenseful atmosphere.
@@ -346,10 +346,10 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 
 
 
-6.Project Objectives and Achievements
+<h2>6.Project Objectives and Achievements</h2>
 
 
-6.1 Project Objectives
+<h3>6.1 Project Objectives</h3>
 
 
 • Master Development Skills:Proficiency in HTML5,CSS3,and JavaScript.
@@ -359,7 +359,7 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 • Learn Game Design:Understand the design and development process of mystery investigation games.
 
 
-6.2 Learning Outcomes
+<h3>6.2 Learning Outcomes</h3>
 
 
 • Individual Development:Each team member will be able to independently develop a small web game by the end of the project.
@@ -373,10 +373,10 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 
 
 
-7.Detailed Technical Implementation Details
+<h2>7.Detailed Technical Implementation Details</h2>
 
 
-7.1 Code Structure
+<h3>7.1 Code Structure</h3>
 
 
 • Modular Design:The game is divided into multiple modules(e.g.,login,main menu,case investigation)with independent functions and interfaces.
@@ -384,7 +384,7 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 • Code Comments:Detailed comments are included to facilitate understanding and maintenance by team members.
 
 
-7.2 Technical Challenges
+<h3>7.2 Technical Challenges</h3>
 
 
 • Interaction Design:Ensuring a good user experience with the dialogue system and interactive options.
@@ -392,7 +392,7 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 • Performance Optimization:Optimizing page load times and response speed to ensure smooth gameplay.
 
 
-7.3 Interface Design Details
+<h3>7.3 Interface Design Details</h3>
 
 
 • Color Scheme:Using dark blue,black,and red as the main colors to create a suspenseful atmosphere.
@@ -406,10 +406,10 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 
 
 
-8.Project Summary and Reflection
+<h2>8.Project Summary and Reflection</h2>
 
 
-8.1 Project Summary
+<h3>8.1 Project Summary</h3>
 
 
 • Successful Experiences:Summarize the successful practices and experiences during the project.
@@ -417,7 +417,7 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 • Encountered Issues:Document the problems encountered and their solutions.
 
 
-8.2 Reflection and Improvement
+<h3>8.2 Reflection and Improvement</h3>
 
 
 • Technical Improvements:Propose directions for technical improvements in future projects.

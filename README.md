@@ -133,7 +133,8 @@ A mystery investigation interactive game,presented in a web-based format combini
 1.3 Project Origin and Inspiration
 
 
-![Inspiration](https://via.placeholder.com/300x150?text=Inspiration)
+<img width="559" height="287" alt="图片2" src="https://github.com/user-attachments/assets/0d9d4ff0-a133-4e46-95d3-6e7f73bd5ba5" />
+
 
 
 The inspiration primarily comes fromSherlock Holmes:Crimes and Punishmentsby Frogwares.We have selected two representative cases,The Black Peter CaseandThe Disappearing Train Case,to present in a text-based interactive manner.This project is for learning and demonstration purposes only,and the plot and characters belong to the original copyright holders.
@@ -157,7 +158,8 @@ The game is set in Victorian-era London.Players take on the role of Sherlock Hol
 2.1.2 The Black Peter Case
 
 
-![The Black Peter Case](https://via.placeholder.com/300x150?text=The+Black+Peter+Case)
+<img width="575" height="362" alt="图片3" src="https://github.com/user-attachments/assets/064aa46f-67de-4f6e-b9a2-8a95819a869b" />
+
 
 
 Black Peter is a retired whaling captain with a violent temper,living in a country cottage.One day,he is found dead in his study,with a whaling harpoon embedded in his back.Players need to investigate the crime scene,collect clues,and converse with suspects to deduce the truth.
@@ -166,7 +168,8 @@ Black Peter is a retired whaling captain with a violent temper,living in a count
 2.1.3 The Disappearing Train Case
 
 
-![The Disappearing Train Case](https://via.placeholder.com/300x150?text=The+Disappearing+Train+Case)
+<img width="610" height="481" alt="图片4" src="https://github.com/user-attachments/assets/12d13d39-cc37-4986-bd37-2fd1ca285f22" />
+
 
 
 In this eerie case,a train vanishes en route.Players must visit railway companies,stations,and surrounding villages to find tracks of clues and uncover the conspiracy behind it.The case involves complex motives,testing players'logical reasoning and attention to detail.
@@ -175,7 +178,8 @@ In this eerie case,a train vanishes en route.Players must visit railway companie
 2.1.4 Ending Design
 
 
-![Ending Design](https://via.placeholder.com/300x150?text=Ending+Design)
+<img width="812" height="376" alt="图片5" src="https://github.com/user-attachments/assets/fde5acbf-f659-4dff-923d-2b0cb49842e5" />
+
 
 
 Depending on the choices made by players during the investigation and the clues collected,different endings may be triggered:
@@ -204,7 +208,8 @@ After completing The Black Peter Case,players will unlock The Disappearing Train
 2.2.3 Diverse Puzzle Elements
 
 
-![Diverse Puzzle Elements](https://via.placeholder.com/300x150?text=Diverse+Puzzle+Elements)
+<img width="616" height="426" alt="图片6" src="https://github.com/user-attachments/assets/108237a5-a0a2-4fa6-8d14-c6117c0cd206" />
+
 
 
 Including logical reasoning in dialogues,clue puzzles,and timeline reconstruction to maintain playability.
@@ -216,7 +221,7 @@ Including logical reasoning in dialogues,clue puzzles,and timeline reconstructio
 2.3.1 Dialogue System
 
 
-![Dialogue System](https://via.placeholder.com/300x150?text=Dialogue+System)
+<img width="616" height="426" alt="图片6" src="https://github.com/user-attachments/assets/e519dd08-2495-404e-a403-0431907fcdaa" />
 
 
 Dialogue is presented in a dialogue box format,accompanied by character portraits and emotional changes.
@@ -237,7 +242,8 @@ Key nodes provide options,with different choices affecting the plot direction an
 3.1 Coding Techniques and Tools
 
 
-![Coding Techniques](https://via.placeholder.com/300x150?text=Coding+Techniques)
+<img width="960" height="303" alt="图片7" src="https://github.com/user-attachments/assets/6cd983aa-9e19-4d93-aff0-92c7304e15c2" />
+
 
 
 Implemented usingHTML5+CSS3+JavaScript.Version control is handled withGit,and the IDE used isVS Code.
@@ -299,3 +305,131 @@ The main menu serves as the central hub,connecting the game plot,achievements,an
 
 
 5.Design Documents
+
+
+5.1 Site Map
+
+
+
+
+• Login→Main Menu→Cases→Achievements/Settings
+
+
+5.2 Game Wireframes
+
+
+
+
+
+• Login Interface
+
+• Main Menu
+
+• Case Investigation Interface
+
+• Achievements Page
+
+
+5.3 Design Specifications
+
+
+• Color Scheme:Dark blue,black,and red to create a suspenseful atmosphere.
+
+• Typography:Combination of serif and sans-serif fonts for readability.
+
+• Illustrations:Semi-realistic style.
+
+• Layout:Clean and aligned,with clear information zoning.
+
+
+---
+
+
+
+6.Project Objectives and Achievements
+
+
+6.1 Project Objectives
+
+
+• Master Development Skills:Proficiency in HTML5,CSS3,and JavaScript.
+
+• Enhance Team Collaboration:Improve project management and teamwork.
+
+• Learn Game Design:Understand the design and development process of mystery investigation games.
+
+
+6.2 Learning Outcomes
+
+
+• Individual Development:Each team member will be able to independently develop a small web game by the end of the project.
+
+• Improved Communication:Enhanced communication and collaboration skills among team members.
+
+• User Experience:A deeper understanding of game design principles and the importance of user experience.
+
+
+---
+
+
+
+7.Detailed Technical Implementation Details
+
+
+7.1 Code Structure
+
+
+• Modular Design:The game is divided into multiple modules(e.g.,login,main menu,case investigation)with independent functions and interfaces.
+
+• Code Comments:Detailed comments are included to facilitate understanding and maintenance by team members.
+
+
+7.2 Technical Challenges
+
+
+• Interaction Design:Ensuring a good user experience with the dialogue system and interactive options.
+
+• Performance Optimization:Optimizing page load times and response speed to ensure smooth gameplay.
+
+
+7.3 Interface Design Details
+
+
+• Color Scheme:Using dark blue,black,and red as the main colors to create a suspenseful atmosphere.
+
+• Typography:Combining serif and sans-serif fonts to enhance readability.
+
+• Icon Design:Simple and clear icons to enhance the intuitiveness of the interface.
+
+
+---
+
+
+
+8.Project Summary and Reflection
+
+
+8.1 Project Summary
+
+
+• Successful Experiences:Summarize the successful practices and experiences during the project.
+
+• Encountered Issues:Document the problems encountered and their solutions.
+
+
+8.2 Reflection and Improvement
+
+
+• Technical Improvements:Propose directions for technical improvements in future projects.
+
+• Team Collaboration Improvements:Summarize issues in team collaboration and suggest improvements.
+
+
+---
+
+
+Note:As this is the initial version,there are no in-game images or content displayed.These will be added as the project progresses.
+
+
+---
+

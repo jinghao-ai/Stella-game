@@ -1,9 +1,11 @@
 
-**Stella Team's Suspense Crime Investigation Interactive Game**
+
+Stella Team's Suspense Crime Investigation Interactive Game
 
 
-![Game Banner]
- width="600" height="300" alt="图片1" src="https://github.com/user-attachments/assets/150489c3-0f1a-4120-8003-53bb3101d7ca" />
+![Uploading 图片1.png…]()
+
+
 
 
 Project Plan

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<body style="font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333;">
+
+    <div style="background: #fff; max-width: 1000px; margin: 40px auto; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);">
+
+        <h1 id="typewriter" style="text-align: center; margin-bottom: 30px; overflow: hidden; white-space: nowrap; letter-spacing: 2px;"></h1>
+
+        <script>
+            var i = 0;
+            var txt = "Hello, I'm 董泽权";
+            var speed = 150;
+
+            function typeWriter() {
+                if (i < txt.length) {
+                    document.getElementById("typewriter").innerHTML += txt.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, speed);
+                }
+            }
+            typeWriter();
+        </script>
+
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+
+            <div style="margin-right: 20px;">
+                 <img src="董泽权照片.jpg" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"/>
+            </div>
+            </div>
+
+            <div style="flex-grow: 1; text-align: left; font-size: 18px;">
+            <p><strong>小组：STELLA</strong></p>
+            <p><strong>职位：程序员，Framework</strong></p>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">简介</h2>
+            <p>在努力学习编程和思考游戏框架的项目负责人</p>
+            <p>喜欢游戏</p>
+            <p>想做网安</p>
+            <p>努力理解并学习相关C语言</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">个人标签</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 5px; font-size: 16px;"><strong>二次元</strong></li>
+                <li style="margin-bottom: 5px; font-size: 16px;"><strong>喜欢魂游，如艾尔，血源诅咒</strong></li>
+                <li style="margin-bottom: 5px; font-size: 16px;"><strong>小说重度爱好者</strong></li>
+                <li style="margin-bottom: 5px; font-size: 16px;"><strong>休闲娱乐，养老式游戏玩家</strong></li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">兴趣与爱好</h2>
+            <p style="color: #333;">（同好打招呼处）</p>
+            <p>听歌品味：Duvet</p>
+            <p>To Be Continued...</p>
+        </div>
+
+         <div style="text-align: center; margin-top: 20px;">
+            <p>联系方式：1119355915@qq.com。17698272673。</p>
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>

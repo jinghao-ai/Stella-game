@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>罪与罚：福尔摩斯探案</title>
+    <link rel="stylesheet" href="../CSS/主界面样式.css">
+</head>
+<body>
+    <!-- 开发人员提示界面 -->
+    <div id="dev-notes">
+        <div class="notes-content">
+            <h2>调查员须知</h2>
+            <p>本游戏包含令人不安的内容与情节</p >
+            <p>未成年人请谨慎游玩</p>
+            <p>建议在心理准备充足的情况下进行游戏</p >
+            <p>黑暗中隐藏着真相，但也潜伏着危险</p >
+            <p>祝您好运，侦探先生/女士</p >
+            <div class="continue-prompt">[按任意键继续]</div>
+        </div>
+    </div>
+    <!-- Logo页面：基于你的图片设计，暗黑背景、金色logo -->
+    <div id="logo" class="screen active">
+        <div class="logo-container">
+            <img src="../Image/1615b46ba5b1f11a53bf135984150c7d.jpg">
+            <!-- Logo符号：简单SVG模拟你的金色符号（可替换为img src="logo-symbol.png"） -->
+            <svg class="logo-symbol" width="200" height="200" viewBox="0 0 200 200">
+                <g fill="#FFD700" stroke="#FFD700" stroke-width="2">
+                    <line x1="100" y1="20" x2="100" y2="80" />
+                    <line x1="80" y1="100" x2="120" y2="100" />
+                    <circle cx="100" cy="120" r="20" />
+                    <line x1="100" y1="140" x2="100" y2="180" />
+                </g>
+            </svg>
+            <!-- Logo文本：Stella，匹配你的金色字体 -->
+            <h1 class="logo-text"></h1>
+            <p class="loading-text"></p >
+        </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div id="main-menu" class="screen">
+        <div class="background-office"></div>
+        <header class="title">
+            <h1>罪与罚：福尔摩斯探案</h1>
+            <p>Stella Studio</p >
+        </header>
+        <nav class="episode-list">
+            <ul>
+                <li class="episode unlocked" data-episode="1">
+                    <span class="lock-icon">🔓</span>
+                    <h2>Episode 1: 布莱克彼得的命运</h2>
+                    <p>一个捕鲸船长的神秘死亡</p >
+                </li>
+                <li class="episode unlocked" data-episode="2">
+                    <span class="lock-icon">🔓</span>
+                    <h2>Episode 2: 罗马浴场事件</h2>
+                    <p>浴场中的失踪与阴谋</p >
+                </li>
+            </ul>
+        </nav>
+        <footer class="menu-buttons">
+            <button id="settings-btn">设置</button>
+            <button id="exit-btn">退出</button>
+        </footer>
+    </div>
+
+    <!-- 游戏主场景 -->
+    <div id="game-scene" class="screen">
+        <div class="background-office"></div>
+        <div class="dialogue-area">
+            <div class="character-placeholder left">
+                <div class="char-standin" style="background: #4a4a4a; height: 400px; width: 200px;"></div>
+            </div>
+            <div class="text-box">
+                <div id="dialogue-text"></div>
+                <div id="ending-display" style="display: none; color: #ff0000; font-weight: bold;"></div>
+                <div id="choices"></div>
+            </div>
+            <div class="character-placeholder right">
+                <div class="char-standin" style="background: #666; height: 400px; width: 200px;"></div>
+            </div>
+        </div>
+        <button id="back-to-menu">返回菜单</button>
+    </div>
+
+    <!-- 设置模态 -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>设置</h2>
+            <section>
+                <h3>音频</h3>
+                <label>音量: <input type="range" id="audio-slider" min="0" max="100" value="50"></label>
+            </section>
+            <section>
+                <h3>画质</h3>
+                <select id="quality-select">
+                    <option value="low">低</option>
+                    <option value="medium" selected>中</option>
+                    <option value="high">高</option>
+                </select>
+            </section>
+            <section>
+                <h3>语言</h3>
+                <select id="language-select">
+                    <option value="zh-CN" selected>简体中文</option>
+                    <option value="en">English</option>
+                </select>
+            </section>
+            <button id="apply-settings">应用</button>
+        </div>
+    </div>
+
+    <script src="../Javascript/主界面.js"></script>
+</body>
+</html>

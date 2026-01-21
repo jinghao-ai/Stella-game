@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全屏木门检测系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #ecf0f1;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 全屏木门容器 */
+        .door-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 100%);
+            transition: transform 2s ease-in-out;
+            transform-style: preserve-3d;
+        }
+        
+        .door-container.open {
+            transform: rotateY(-15deg) translateX(-20%);
+        }
+        
+        .door-container.entered {
+            transform: scale(0.1) rotateY(180deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 木门样式 */
+        .door {
+            width: 400px;
+            height: 700px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 2s ease-in-out;
+        }
+        
+        .door-frame {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #5D4037, #8B4513, #5D4037);
+            border: 20px solid #3E2723;
+            border-radius: 5px;
+            position: absolute;
+            box-shadow: 
+                0 0 50px rgba(0, 0, 0, 0.8),
+                inset 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .door-panel {
+            width: 360px;
+            height: 660px;
+            background: 
+                linear-gradient(45deg, #8B4513, #A0522D, #8B4513),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(93, 64, 55, 0.3) 10px,
+                    rgba(93, 64, 55, 0.3) 12px
+                );
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            border: 1px solid #5D4037;
+            transform-origin: left center;
+            transition: transform 2s ease-in-out;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .door-panel.open {
+            transform: rotateY(-80deg);
+        }
+        
+        /* 门锁组件 - 大幅缩小 */
+        .lock-container {
+            position: absolute;
+            top: 50%;
+            right: 40px;
+            transform: translateY(-50%);
+            z-index: 5;
+        }
+        
+        .lock-plate {
+            width: 60px;
+            height: 90px;
+            background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+            border-radius: 5px;
+            position: relative;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        .lock-cylinder {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #bdc3c7, #ecf0f1);
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+            left: 15px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .keyhole {
+            width: 4px;
+            height: 12px;
+            background: #2c3e50;
+            position: absolute;
+            top: 39px;
+            left: 28px;
+            border-radius: 2px;
+        }
+        
+        .door-handle {
+            width: 25px;
+            height: 5px;
+            background: linear-gradient(to bottom, #bdc3c7, #ecf0f1);
+            position: absolute;
+            top: 41px;
+            right: -20px;
+            border-radius: 3px 0 0 3px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1;
+        }
+        
+        .door-handle:hover {
+            transform: translateX(3px);
+        }
+        
+        /* 检测结果面板 */
+        .results-panel {
+            position: absolute;
+            top: 50%;
+            right: 150px;
+            transform: translateY(-50%);
+            width: 280px;
+            background: rgba(30, 40, 50, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            z-index: 20;
+        }
+        
+        .results-panel.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .result-item {
+            background: rgba(40, 50, 60, 0.7);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s;
+        }
+        
+        .result-item.active {
+            border-left: 4px solid #f1c40f;
+            background: rgba(52, 152, 219, 0.2);
+        }
+        
+        .result-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .result-icon {
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .result-item.active .result-icon {
+            background: #f1c40f;
+        }
+        
+        .result-desc {
+            color: #bdc3c7;
+            font-size: 0.8rem;
+        }
+        
+        /* 可疑区域标记 - 精确对准门锁组件 */
+        .suspicious-area {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: rgba(231, 76, 60, 0.3);
+            border: 2px dashed rgba(231, 76, 60, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .suspicious-area:hover {
+            background: rgba(231, 76, 60, 0.5);
+            transform: scale(1.2);
+        }
+        
+        .suspicious-area.active {
+            background: rgba(241, 196, 15, 0.6);
+            border: 2px solid #f1c40f;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.7);
+        }
+        
+        .suspicious-area::after {
+            content: '!';
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        /* 区域1：精确对准锁芯中心 */
+        .area-1 {
+            left: 278px;
+            top: 318px;
+        }
+        
+        /* 区域2：精确对准锁板左上角 */
+        .area-2 {
+            left: 260px;
+            top: 285px;
+        }
+        
+        /* 区域3：精确对准锁板底部中心（锁舌区域） */
+        .area-3 {
+            left: 278px;
+            top: 363px;
+        }
+        
+        /* 门上的按钮 */
+        .door-buttons {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 15;
+        }
+        
+        .door-btn {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .door-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.5);
+        }
+        
+        .door-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .door-open-btn {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+        
+        .door-enter-btn {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            display: none;
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 30;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #e67e22, #f39c12);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+            font-size: 0.9rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(230, 126, 34, 0.5);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-complete {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+            display: none;
+        }
+        
+        /* 房间内部视图 */
+        .room-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+        }
+        
+        .room-view.active {
+            display: flex;
+            animation: fadeIn 1s ease;
+        }
+        
+        .room-content {
+            text-align: center;
+            max-width: 500px;
+            padding: 30px;
+            background: rgba(44, 62, 80, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .room-content h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #f39c12;
+        }
+        
+        .room-content p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+            line-height: 1.5;
+        }
+        
+        .back-btn {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #e67e22, #f39c12);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+            font-size: 0.9rem;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(230, 126, 34, 0.5);
+        }
+        
+        /* 提示信息 */
+        .hint {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            z-index: 40;
+            animation: pulse 2s infinite;
+        }
+        
+        /* 检测进度条 */
+        .progress-container {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 4px;
+            display: none;
+            z-index: 25;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #bdc3c7;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .door {
+                width: 300px;
+                height: 500px;
+            }
+            
+            .door-panel {
+                width: 260px;
+                height: 460px;
+            }
+            
+            .lock-container {
+                right: 20px;
+            }
+            
+            .lock-plate {
+                width: 50px;
+                height: 75px;
+            }
+            
+            .lock-cylinder {
+                width: 25px;
+                height: 25px;
+                top: 25px;
+                left: 12px;
+            }
+            
+            .keyhole {
+                top: 32px;
+                left: 23px;
+            }
+            
+            .door-handle {
+                width: 20px;
+                height: 4px;
+                top: 34px;
+                right: -15px;
+            }
+            
+            .results-panel {
+                right: 100px;
+                width: 220px;
+            }
+            
+            .suspicious-area {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .suspicious-area::after {
+                font-size: 12px;
+            }
+            
+            .door-buttons {
+                bottom: 30px;
+                gap: 10px;
+            }
+            
+            .door-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+            
+            /* 移动端调整检测区域位置 */
+            .area-1 {
+                left: 205px;
+                top: 220px;
+            }
+            
+            .area-2 {
+                left: 190px;
+                top: 193px;
+            }
+            
+            .area-3 {
+                left: 205px;
+                top: 258px;
+            }
+            
+            .progress-container {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 提示信息 -->
+    <div class="hint" id="hint">点击门锁上的标记区域进行检测</div>
+    
+    <!-- 检测进度条 -->
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-text" id="progressText">检测进度: 0%</div>
+    </div>
+    
+    <!-- 主门容器 -->
+    <div class="door-container" id="doorContainer">
+        <div class="door">
+            <div class="door-frame"></div>
+            <div class="door-panel" id="doorPanel">
+                <!-- 门锁组件 -->
+                <div class="lock-container">
+                    <div class="lock-plate">
+                        <div class="lock-cylinder">
+                            <div class="keyhole"></div>
+                        </div>
+                        <div class="door-handle" id="doorHandle"></div>
+                    </div>
+                </div>
+                
+                <!-- 门上的按钮 -->
+                <div class="door-buttons">
+                    <button class="door-btn door-open-btn" id="doorOpenBtn">打开门</button>
+                    <button class="door-btn door-enter-btn" id="doorEnterBtn">进入房间</button>
+                </div>
+                
+                <!-- 可疑区域标记 - 精确对准门锁组件 -->
+                <div class="suspicious-area area-1" data-id="1" data-name="锁芯划痕" data-desc="锁芯周围有明显划痕，可能是撬锁工具留下的痕迹"></div>
+                <div class="suspicious-area area-2" data-id="2" data-name="面板凹陷" data-desc="门锁面板有凹陷，显示曾遭受外力撞击"></div>
+                <div class="suspicious-area area-3" data-id="3" data-name="锁舌磨损" data-desc="锁舌区域有磨损，可能表示多次尝试开锁"></div>
+                
+                <!-- 进入房间区域（门打开后显示） -->
+                <div class="enter-zone" id="enterZone" style="display: none;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 8px;">
+                        <h3>点击进入房间</h3>
+                        <p>门锁检测已完成，可以安全进入</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 检测结果面板 -->
+        <div class="results-panel" id="resultsPanel">
+            <h3 style="margin-bottom: 12px; color: #f39c12;">检测结果</h3>
+            <div class="result-item" data-id="1">
+                <div class="result-title">
+                    <div class="result-icon">1</div>
+                    <span>锁芯划痕</span>
+                </div>
+                <p class="result-desc">检测到锁芯周围有多次深浅不一的划痕，这些痕迹与专业撬锁工具的使用特征相符。</p>
+            </div>
+            
+            <div class="result-item" data-id="2">
+                <div class="result-title">
+                    <div class="result-icon">2</div>
+                    <span>面板凹陷</span>
+                </div>
+                <p class="result-desc">门锁面板存在明显凹陷，表明曾受到钝器撞击，可能是暴力开锁的尝试。</p>
+            </div>
+            
+            <div class="result-item" data-id="3">
+                <div class="result-title">
+                    <div class="result-icon">3</div>
+                    <span>锁舌磨损</span>
+                </div>
+                <p class="result-desc">锁舌区域有异常磨损，显示可能有人多次尝试使用不正确的方法操作门锁。</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button class="btn" id="resetBtn">重置检测</button>
+        <button class="btn btn-complete" id="completeBtn">生成报告</button>
+    </div>
+    
+    <!-- 房间内部视图 -->
+    <div class="room-view" id="roomView">
+        <div class="room-content">
+            <h2>欢迎进入房间</h2>
+            <p>您已成功通过门锁检测系统，进入了这个安全的空间。</p>
+            <p>房间内部安全检查已完成，未发现安全隐患。</p>
+            <button class="back-btn" id="backBtn">返回门口</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const doorContainer = document.getElementById('doorContainer');
+            const doorPanel = document.getElementById('doorPanel');
+            const doorHandle = document.getElementById('doorHandle');
+            const resultsPanel = document.getElementById('resultsPanel');
+            const enterZone = document.getElementById('enterZone');
+            const roomView = document.getElementById('roomView');
+            const hint = document.getElementById('hint');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const doorOpenBtn = document.getElementById('doorOpenBtn');
+            const doorEnterBtn = document.getElementById('doorEnterBtn');
+            
+            const suspiciousAreas = document.querySelectorAll('.suspicious-area');
+            const resultItems = document.querySelectorAll('.result-item');
+            const resetBtn = document.getElementById('resetBtn');
+            const completeBtn = document.getElementById('completeBtn');
+            const backBtn = document.getElementById('backBtn');
+            
+            let detectedAreas = new Set();
+            let doorOpened = false;
+            
+            // 初始化提示信息
+            updateHint('点击门锁上的标记区域进行检测');
+            
+            // 更新提示信息
+            function updateHint(message) {
+                hint.textContent = message;
+            }
+            
+            // 更新进度条
+            function updateProgress() {
+                const progress = Math.round((detectedAreas.size / 3) * 100);
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `检测进度: ${progress}%`;
+                
+                if (progress > 0) {
+                    progressContainer.style.display = 'block';
+                }
+                
+                if (progress === 100) {
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                    }, 2000);
+                }
+            }
+            
+            // 可疑区域点击事件
+            suspiciousAreas.forEach(area => {
+                area.addEventListener('click', function() {
+                    const areaId = this.getAttribute('data-id');
+                    const areaName = this.getAttribute('data-name');
+                    
+                    // 如果已经激活，则取消激活
+                    if (this.classList.contains('active')) {
+                        this.classList.remove('active');
+                        detectedAreas.delete(areaId);
+                        
+                        // 隐藏对应的结果项
+                        const correspondingResult = document.querySelector(`.result-item[data-id="${areaId}"]`);
+                        if (correspondingResult) {
+                            correspondingResult.classList.remove('active');
+                        }
+                    } else {
+                        // 激活区域
+                        this.classList.add('active');
+                        detectedAreas.add(areaId);
+                        
+                        // 显示对应的结果项
+                        const correspondingResult = document.querySelector(`.result-item[data-id="${areaId}"]`);
+                        if (correspondingResult) {
+                            correspondingResult.classList.add('active');
+                        }
+                        
+                        // 显示结果面板
+                        resultsPanel.classList.add('active');
+                        
+                        // 更新提示
+                        updateHint(`已检测: ${areaName}`);
+                    }
+                    
+                    // 更新进度条
+                    updateProgress();
+                    
+                    // 检查是否所有区域都已检测
+                    checkCompletion();
+                });
+            });
+            
+            // 检查是否所有区域都已检测
+            function checkCompletion() {
+                if (detectedAreas.size === 3) {
+                    completeBtn.style.display = 'block';
+                    doorOpenBtn.style.display = 'block';
+                    updateHint('所有区域检测完成！可以打开门了');
+                } else {
+                    completeBtn.style.display = 'none';
+                    doorOpenBtn.style.display = 'none';
+                }
+            }
+            
+            // 重置按钮
+            resetBtn.addEventListener('click', function() {
+                suspiciousAreas.forEach(area => {
+                    area.classList.remove('active');
+                });
+                
+                resultItems.forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                detectedAreas.clear();
+                completeBtn.style.display = 'none';
+                doorOpenBtn.style.display = 'none';
+                doorEnterBtn.style.display = 'none';
+                resultsPanel.classList.remove('active');
+                doorPanel.classList.remove('open');
+                doorContainer.classList.remove('open');
+                enterZone.style.display = 'none';
+                doorOpened = false;
+                progressContainer.style.display = 'none';
+                progressBar.style.width = '0%';
+                progressText.textContent = '检测进度: 0%';
+                
+                updateHint('点击门锁上的标记区域进行检测');
+            });
+            
+            // 完成按钮
+            completeBtn.addEventListener('click', function() {
+                updateHint('检测报告已生成');
+                
+                // 模拟生成报告过程
+                completeBtn.disabled = true;
+                completeBtn.textContent = '生成中...';
+                
+                setTimeout(() => {
+                    completeBtn.disabled = false;
+                    completeBtn.textContent = '生成报告';
+                    updateHint('报告生成完成！');
+                }, 1500);
+            });
+            
+            // 开门按钮
+            doorOpenBtn.addEventListener('click', function() {
+                doorPanel.classList.add('open');
+                doorContainer.classList.add('open');
+                doorOpened = true;
+                
+                updateHint('门正在打开...');
+                
+                setTimeout(() => {
+                    enterZone.style.display = 'block';
+                    doorEnterBtn.style.display = 'block';
+                    doorOpenBtn.style.display = 'none';
+                    updateHint('门已打开，可以进入房间');
+                }, 1500);
+            });
+            
+            // 进入按钮
+            doorEnterBtn.addEventListener('click', function() {
+                doorContainer.classList.add('entered');
+                updateHint('正在进入房间...');
+                
+                setTimeout(() => {
+                    roomView.classList.add('active');
+                    updateHint('欢迎进入房间');
+                }, 1000);
+            });
+            
+            // 返回按钮
+            backBtn.addEventListener('click', function() {
+                roomView.classList.remove('active');
+                updateHint('正在返回门口...');
+                
+                setTimeout(() => {
+                    doorContainer.classList.remove('entered');
+                    doorOpenBtn.style.display = 'block';
+                    doorEnterBtn.style.display = 'none';
+                    doorPanel.classList.remove('open');
+                    doorContainer.classList.remove('open');
+                    enterZone.style.display = 'none';
+                    doorOpened = false;
+                    updateHint('已返回门口');
+                }, 500);
+            });
+            
+            // 门把手点击事件（替代进入按钮）
+            doorHandle.addEventListener('click', function() {
+                if (doorOpened) {
+                    doorContainer.classList.add('entered');
+                    updateHint('正在进入房间...');
+                    
+                    setTimeout(() => {
+                        roomView.classList.add('active');
+                        updateHint('欢迎进入房间');
+                    }, 1000);
+                } else {
+                    updateHint('请先完成检测并打开门');
+                }
+            });
+            
+            // 进入区域点击事件
+            enterZone.addEventListener('click', function() {
+                doorContainer.classList.add('entered');
+                updateHint('正在进入房间...');
+                
+                setTimeout(() => {
+                    roomView.classList.add('active');
+                    updateHint('欢迎进入房间');
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

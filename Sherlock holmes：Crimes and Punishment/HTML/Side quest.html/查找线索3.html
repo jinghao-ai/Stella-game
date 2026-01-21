@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>木桌场景与海盗船拼图</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: 
+                linear-gradient(to bottom, #8b4513 0%, #5d2906 100%),
+                repeating-linear-gradient(90deg, 
+                    rgba(101, 67, 33, 0.3) 0px, 
+                    rgba(101, 67, 33, 0.3) 1px, 
+                    transparent 1px, 
+                    transparent 30px),
+                repeating-linear-gradient(0deg, 
+                    rgba(101, 67, 33, 0.3) 0px, 
+                    rgba(101, 67, 33, 0.3) 1px, 
+                    transparent 1px, 
+                    transparent 30px),
+                radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.2) 0%, transparent 50%);
+            background-blend-mode: overlay, overlay, overlay, normal;
+            color: #f1f1f1;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(45deg, rgba(101, 67, 33, 0.1) 25%, transparent 25%, transparent 75%, rgba(101, 67, 33, 0.1) 75%),
+                linear-gradient(45deg, rgba(101, 67, 33, 0.1) 25%, transparent 25%, transparent 75%, rgba(101, 67, 33, 0.1) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: rgba(45, 64, 89, 0.8);
+            border-radius: 12px;
+            border: 2px solid #2d4059;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #e6d5b8;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #a3a3a3;
+            font-size: 1.1rem;
+        }
+        
+        .wood-table-area {
+            height: 600px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(139, 69, 19, 0.3);
+            border: 2px solid #5d2906;
+            margin-bottom: 40px;
+        }
+        
+        .wood-grain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, rgba(101, 67, 33, 0.8) 1px, transparent 1px),
+                linear-gradient(rgba(101, 67, 33, 0.8) 1px, transparent 1px),
+                linear-gradient(45deg, rgba(101, 67, 33, 0.4) 25%, transparent 25%, transparent 75%, rgba(101, 67, 33, 0.4) 75%),
+                linear-gradient(45deg, rgba(101, 67, 33, 0.4) 25%, transparent 25%, transparent 75%, rgba(101, 67, 33, 0.4) 75%);
+            background-size: 30px 30px, 30px 30px, 60px 60px, 60px 60px;
+            background-position: 0 0, 0 0, 0 0, 30px 30px;
+            opacity: 0.7;
+        }
+        
+        .table-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 120px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .classic-glass {
+            width: 100px;
+            height: 120px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        
+        .classic-glass:hover {
+            transform: translateY(-10px);
+        }
+        
+        .classic-glass.selected {
+            transform: translateY(-20px);
+        }
+        
+        .glass-container {
+            width: 100px;
+            height: 120px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .glass-unified {
+            width: 70px;
+            height: 100px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .glass-body {
+            width: 100%;
+            height: 80px;
+            background-color: #ffb366;
+            border: 2px solid #e69500;
+            border-top: 3px solid #ffcc99;
+            border-radius: 0;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
+        }
+        
+        .glass-base {
+            width: 55px;
+            height: 15px;
+            background-color: #ffffff;
+            border-radius: 0;
+            margin-top: -2px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.2) 100%);
+        }
+        
+        .glass-details {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        
+        .classic-glass:hover .glass-details {
+            opacity: 1;
+        }
+        
+        /* 信封样式 */
+        .letter {
+            width: 180px;
+            height: 140px;
+            background: linear-gradient(to bottom, #f5e6ca 0%, #e6d5b8 100%);
+            border: 2px solid #d4c19a;
+            border-radius: 8px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        
+        .letter:hover {
+            transform: translateY(-10px) rotate(-2deg);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .letter-seal {
+            width: 40px;
+            height: 40px;
+            background-color: #c44536;
+            border-radius: 50%;
+            position: absolute;
+            top: -20px;
+            right: -15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border: 2px solid #a63c2f;
+        }
+        
+        .letter-title {
+            font-size: 1.2rem;
+            color: #5d2906;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .letter-subtitle {
+            font-size: 0.9rem;
+            color: #8b5a2b;
+            text-align: center;
+        }
+        
+        .letter-lines {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            height: 4px;
+            background: linear-gradient(to right, 
+                transparent 0%, transparent 10%,
+                #d4c19a 10%, #d4c19a 30%,
+                transparent 30%, transparent 50%,
+                #d4c19a 50%, #d4c19a 70%,
+                transparent 70%, transparent 90%,
+                #d4c19a 90%, #d4c19a 100%);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background-color: #ff9a3c;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background-color: #ff7b0d;
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .collection-box {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: rgba(45, 64, 89, 0.8);
+            border-radius: 12px;
+            border: 2px dashed #8b5a2b;
+        }
+        
+        .collection-title {
+            font-size: 1.3rem;
+            color: #e6d5b8;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .collection-items {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .collection-item {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            font-size: 1.5rem;
+        }
+        
+        .collection-item.collected {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        
+        .collection-item.pirate-ship {
+            position: relative;
+        }
+        
+        .tobacco-shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M20,50 Q40,30 60,50 T100,50' stroke='%235d2906' stroke-width='5' fill='none' opacity='0.7'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .collection-item.collected .tobacco-shadow {
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            color: #a3a3a3;
+            font-size: 0.9rem;
+            background-color: rgba(45, 64, 89, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #2d4059;
+        }
+        
+        .glass-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .glass-modal-content {
+            background: linear-gradient(135deg, #2d4059 0%, #1a1a2e 100%);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            position: relative;
+            border: 2px solid #8b5a2b;
+        }
+        
+        .glass-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ff9a3c;
+        }
+        
+        .glass-modal-title {
+            font-size: 1.5rem;
+            color: #e6d5b8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-glass-modal {
+            background: none;
+            border: none;
+            color: #ff9a3c;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-glass-modal:hover {
+            background-color: rgba(255, 154, 60, 0.1);
+        }
+        
+        .glass-info-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #d1d1d1;
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .puzzle-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .puzzle-modal-content {
+            background: linear-gradient(135deg, #2d4059 0%, #1a1a2e 100%);
+            width: 90%;
+            max-width: 900px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            position: relative;
+            border: 2px solid #8b5a2b;
+        }
+        
+        .puzzle-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #3ca5ff;
+        }
+        
+        .puzzle-modal-title {
+            font-size: 1.5rem;
+            color: #e6d5b8;
+        }
+        
+        .close-puzzle-modal {
+            background: none;
+            border: none;
+            color: #ff9a3c;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-puzzle-modal:hover {
+            background-color: rgba(255, 154, 60, 0.1);
+        }
+        
+        .puzzle-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .puzzle-instructions {
+            text-align: center;
+            color: #d1d1d1;
+            margin-bottom: 10px;
+            max-width: 600px;
+        }
+        
+        .puzzle-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .puzzle-piece {
+            width: 250px;
+            height: 150px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #8b5a2b;
+        }
+        
+        .puzzle-piece img {
+            max-width: 100%;
+            max-height: 100%;
+            transform-origin: center;
+            transition: transform 0.5s ease;
+        }
+        
+        .puzzle-pieces {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .puzzle-combined {
+            width: 510px;
+            height: 150px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            border: 2px dashed #8b5a2b;
+            margin: 10px auto;
+        }
+        
+        .rotation-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .rotate-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3ca5ff;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .rotate-btn:hover {
+            background-color: #2b8cd6;
+        }
+        
+        .puzzle-result {
+            margin-top: 20px;
+            text-align: center;
+            min-height: 40px;
+        }
+        
+        .success-message {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .try-again-message {
+            color: #ff9a3c;
+        }
+        
+        /* 新增样式：照片淡化效果和烟叶显示 */
+        .combined-image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .pirate-ship-image {
+            position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            transition: opacity 3s ease;
+            z-index: 2;
+        }
+        
+        .tobacco-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='150' viewBox='0 0 500 150'%3E%3Crect width='500' height='150' fill='%231a1a2e'/%3E%3Cpath d='M50,50 Q150,20 250,50 T450,50' stroke='%235d2906' stroke-width='8' fill='none' opacity='0.8'/%3E%3Cpath d='M80,80 Q180,40 300,80 T420,80' stroke='%238b5a2b' stroke-width='6' fill='none' opacity='0.7'/%3E%3Cpath d='M100,100 Q220,60 350,100 T480,100' stroke='%23a67c52' stroke-width='4' fill='none' opacity='0.6'/%3E%3C/svg%3E");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 3s ease;
+            z-index: 1;
+        }
+        
+        .fade-out {
+            opacity: 0.3;
+        }
+        
+        .fade-in {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .table-content {
+                flex-direction: column;
+                gap: 80px;
+            }
+            
+            .puzzle-pieces {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .puzzle-piece, .puzzle-combined {
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chess-board"></i> 木桌场景与海盗船之谜</h1>
+            <p class="subtitle">探索桌上的古典杯，解开神秘信封中的海盗船拼图</p>
+        </header>
+        
+        <div class="wood-table-area">
+            <div class="wood-grain"></div>
+            
+            <div class="table-content">
+                <!-- 第一个古典杯 -->
+                <div class="classic-glass" id="glass1" onclick="openGlassModal(1)">
+                    <div class="glass-container">
+                        <div class="glass-unified">
+                            <div class="glass-body"></div>
+                            <div class="glass-base"></div>
+                        </div>
+                    </div>
+                    <div class="glass-details">古典杯 - 点击查看详情</div>
+                </div>
+                
+                <!-- 第二个古典杯 -->
+                <div class="classic-glass" id="glass2" onclick="openGlassModal(2)">
+                    <div class="glass-container">
+                        <div class="glass-unified">
+                            <div class="glass-body"></div>
+                            <div class="glass-base"></div>
+                        </div>
+                    </div>
+                    <div class="glass-details">古典杯 - 点击查看详情</div>
+                </div>
+                
+                <!-- 信封 -->
+                <div class="letter" onclick="openPuzzleModal()">
+                    <div class="letter-seal">
+                        <i class="fas fa-anchor"></i>
+                    </div>
+                    <div class="letter-title">海盗船之谜</div>
+                    <div class="letter-subtitle">点击打开信封</div>
+                    <div class="letter-lines"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="resetBtn" onclick="resetGlasses()">
+                <i class="fas fa-expand-arrows-alt"></i> 全屏返回/重置酒杯
+            </button>
+        </div>
+        
+        <div class="collection-box">
+            <h3 class="collection-title"><i class="fas fa-treasure-chest"></i> 收集品 (临时容器)</h3>
+            <p style="color: #aaa; margin-bottom: 15px; font-size: 0.9rem;">这个收集框是临时的，可以连接到后面的主收集框</p>
+            <div class="collection-items">
+                <div class="collection-item" id="collection1"><i class="fas fa-glass-whiskey"></i></div>
+                <div class="collection-item" id="collection2"><i class="fas fa-glass-whiskey"></i></div>
+                <div class="collection-item pirate-ship" id="collection3">
+                    <i class="fas fa-ship"></i>
+                    <div class="tobacco-shadow"></div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>交互式场景演示 - 木桌与海盗船拼图 | 点击古典杯查看详情，解开信封中的海盗船拼图谜题</p>
+        </footer>
+    </div>
+    
+    <!-- 酒杯详情弹窗 -->
+    <div class="glass-modal" id="glassModal">
+        <div class="glass-modal-content">
+            <div class="glass-modal-header">
+                <h3 class="glass-modal-title"><i class="fas fa-glass-whiskey"></i> 古典杯详情</h3>
+                <button class="close-glass-modal" onclick="closeGlassModal()">&times;</button>
+            </div>
+            <div class="glass-info-text" id="glassModalContent">
+                点击左侧的古典杯查看详情。这两个精致的古典杯放置在木桌上，杯中无水，杯口为平口设计。
+            </div>
+        </div>
+    </div>
+    
+    <!-- 拼图弹窗 -->
+    <div class="puzzle-modal" id="puzzleModal">
+        <div class="puzzle-modal-content">
+            <div class="puzzle-modal-header">
+                <h3 class="puzzle-modal-title"><i class="fas fa-puzzle-piece"></i> 海盗船拼图</h3>
+                <button class="close-puzzle-modal" onclick="closePuzzleModal()">&times;</button>
+            </div>
+            
+            <div class="puzzle-area">
+                <p class="puzzle-instructions">旋转两个拼图块，找到正确的角度，让它们拼接成完整的海盗船图像。拼图后面有烟草的影子。</p>
+                
+                <div class="puzzle-controls">
+                    <button class="btn" onclick="checkPuzzle()">
+                        <i class="fas fa-check"></i> 检查拼合
+                    </button>
+                    <button class="btn" onclick="resetPuzzle()">
+                        <i class="fas fa-redo"></i> 重置旋转
+                    </button>
+                </div>
+                
+                <div class="puzzle-pieces">
+                    <div class="puzzle-piece-container">
+                        <!-- 后端导入照片区域 - 注释说明 -->
+                        <!-- 请将后端提供的图片URL替换下面的src属性 -->
+                        <!-- 示例: <img src="后端提供的图片URL1" alt="海盗船前半部分" id="piece1Img"> -->
+                        <div class="puzzle-piece" id="piece1">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='150' viewBox='0 0 250 150'%3E%3Crect width='250' height='150' fill='%231a1a2e'/%3E%3Cpath d='M10,100 Q30,70 60,90 T125,80' stroke='%23ff9a3c' stroke-width='3' fill='none'/%3E%3Cpath d='M30,110 L50,70 L90,120 L120,90' stroke='%233ca5ff' stroke-width='3' fill='none'/%3E%3Ccircle cx='70' cy='100' r='10' fill='%238b5a2b'/%3E%3C/svg%3E" alt="海盗船前半部分" id="piece1Img">
+                        </div>
+                        <div class="rotation-controls">
+                            <button class="rotate-btn" onclick="rotatePiece(1, 'horizontal')"><i class="fas fa-redo"></i> H</button>
+                            <button class="rotate-btn" onclick="rotatePiece(1, 'vertical')"><i class="fas fa-redo"></i> V</button>
+                        </div>
+                    </div>
+                    
+                    <div class="puzzle-piece-container">
+                        <!-- 后端导入照片区域 - 注释说明 -->
+                        <!-- 请将后端提供的图片URL替换下面的src属性 -->
+                        <!-- 示例: <img src="后端提供的图片URL2" alt="海盗船后半部分" id="piece2Img"> -->
+                        <div class="puzzle-piece" id="piece2">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='150' viewBox='0 0 250 150'%3E%3Crect width='250' height='150' fill='%231a1a2e'/%3E%3Cpath d='M125,80 Q150,60 190,90 T240,100' stroke='%23ff9a3c' stroke-width='3' fill='none'/%3E%3Cpath d='M130,90 L160,120 L200,70 L220,110' stroke='%233ca5ff' stroke-width='3' fill='none'/%3E%3Ccircle cx='180' cy='100' r='10' fill='%23e6d5b8'/%3E%3C/svg%3E" alt="海盗船后半部分" id="piece2Img">
+                        </div>
+                        <div class="rotation-controls">
+                            <button class="rotate-btn" onclick="rotatePiece(2, 'horizontal')"><i class="fas fa-redo"></i> H</button>
+                            <button class="rotate-btn" onclick="rotatePiece(2, 'vertical')"><i class="fas fa-redo"></i> V</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="puzzle-combined" id="combinedPuzzle">
+                    <span style="color: #aaa;">拼合后的海盗船将显示在这里</span>
+                </div>
+                
+                <div class="puzzle-result" id="puzzleResult"></div>
+                
+                <button class="btn" id="collectBtn" onclick="collectPuzzle()" style="display: none; margin-top: 20px;">
+                    <i class="fas fa-download"></i> 全屏返回并收集物品
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedGlass = null;
+        const glassDetails = {
+            1: "这是一个精致的古典杯，由厚实的水晶玻璃制成。杯身低矮，杯口为平口设计，适合盛装威士忌等烈酒。杯身和底座是一体成型的，底座为白色矩形。杯壁厚度适中，能够很好地保持酒液温度。",
+            2: "这是另一个古典杯，比第一个略小，杯身更加圆润。适合盛装白兰地或波本威士忌，平口设计便于饮用。杯身和底座无缝连接，持握舒适。"
+        };
+        
+        function openGlassModal(glassNum) {
+            if (selectedGlass) {
+                document.getElementById(`glass${selectedGlass}`).classList.remove('selected');
+            }
+            
+            selectedGlass = glassNum;
+            document.getElementById(`glass${selectedGlass}`).classList.add('selected');
+            
+            document.getElementById('glassModalContent').textContent = glassDetails[glassNum];
+            document.getElementById('glassModal').style.display = 'flex';
+            
+            document.getElementById(`collection${glassNum}`).classList.add('collected');
+        }
+        
+        function closeGlassModal() {
+            document.getElementById('glassModal').style.display = 'none';
+        }
+        
+        function resetGlasses() {
+            if (selectedGlass) {
+                document.getElementById(`glass${selectedGlass}`).classList.remove('selected');
+            }
+            
+            selectedGlass = null;
+            document.getElementById('glassModalContent').textContent = "点击左侧的古典杯查看详情。这两个精致的古典杯放置在木桌上，杯中无水，杯口为平口设计。";
+            closeGlassModal();
+        }
+        
+        let piece1Rotation = {horizontal: 0, vertical: 0};
+        let piece2Rotation = {horizontal: 0, vertical: 0};
+        let puzzleSolved = false;
+        
+        // 后端导入照片功能 - 注释说明
+        // 以下变量用于存储后端提供的图片URL
+        // 请在实际部署时通过后端API获取图片URL并设置这些变量
+        let backendImageUrl1 = null; // 后端提供的第一张图片URL
+        let backendImageUrl2 = null; // 后端提供的第二张图片URL
+        
+        function openPuzzleModal() {
+            document.getElementById('puzzleModal').style.display = 'flex';
+            resetPuzzle();
+            
+            // 后端导入照片功能 - 注释说明
+            // 在实际部署中，这里可以添加从后端获取图片URL的逻辑
+            // 示例:
+            // fetch('/api/get-puzzle-images')
+            //   .then(response => response.json())
+            //   .then(data => {
+            //       backendImageUrl1 = data.image1;
+            //       backendImageUrl2 = data.image2;
+            //       // 更新图片元素
+            //       document.getElementById('piece1Img').src = backendImageUrl1;
+            //       document.getElementById('piece2Img').src = backendImageUrl2;
+            //   });
+        }
+        
+        function closePuzzleModal() {
+            document.getElementById('puzzleModal').style.display = 'none';
+        }
+        
+        // 修改旋转函数，将360度改为180度
+        function rotatePiece(pieceNum, direction) {
+            const pieceImg = document.getElementById(`piece${pieceNum}Img`);
+            let rotation;
+            
+            if (pieceNum === 1) {
+                if (direction === 'horizontal') {
+                    piece1Rotation.horizontal = (piece1Rotation.horizontal + 180) % 360;
+                } else {
+                    piece1Rotation.vertical = (piece1Rotation.vertical + 180) % 360;
+                }
+                rotation = `rotateX(${piece1Rotation.vertical}deg) rotateY(${piece1Rotation.horizontal}deg)`;
+            } else {
+                if (direction === 'horizontal') {
+                    piece2Rotation.horizontal = (piece2Rotation.horizontal + 180) % 360;
+                } else {
+                    piece2Rotation.vertical = (piece2Rotation.vertical + 180) % 360;
+                }
+                rotation = `rotateX(${piece2Rotation.vertical}deg) rotateY(${piece2Rotation.horizontal}deg)`;
+            }
+            
+            pieceImg.style.transform = rotation;
+            
+            document.getElementById('puzzleResult').innerHTML = '';
+            document.getElementById('collectBtn').style.display = 'none';
+            
+            updateCombinedPreview();
+        }
+        
+        function updateCombinedPreview() {
+            const combinedDiv = document.getElementById('combinedPuzzle');
+            
+            const isAligned = 
+                piece1Rotation.horizontal % 360 === 0 && 
+                piece1Rotation.vertical % 360 === 0 &&
+                piece2Rotation.horizontal % 360 === 0 && 
+                piece2Rotation.vertical % 360 === 0;
+            
+            if (isAligned) {
+                // 后端导入照片功能 - 注释说明
+                // 如果使用了后端提供的图片，这里可以显示拼接后的效果
+                // 目前使用默认的SVG图像
+                combinedDiv.innerHTML = `
+                    <div class="combined-image-container">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='150' viewBox='0 0 500 150'%3E%3Crect width='500' height='150' fill='%231a1a2e'/%3E%3Cpath d='M10,100 Q30,70 60,90 T250,80 Q280,60 320,90 T490,100' stroke='%23ff9a3c' stroke-width='3' fill='none'/%3E%3Cpath d='M30,110 L50,70 L90,120 L120,90 L250,80 L280,120 L320,70 L370,110' stroke='%233ca5ff' stroke-width='3' fill='none'/%3E%3Ccircle cx='70' cy='100' r='10' fill='%238b5a2b'/%3E%3Ccircle cx='320' cy='100' r='10' fill='%23e6d5b8'/%3E%3C/svg%3E" alt="完整海盗船" class="pirate-ship-image" id="combinedImage">
+                        <div class="tobacco-pattern" id="tobaccoPattern"></div>
+                    </div>
+                `;
+            } else {
+                combinedDiv.innerHTML = '<span style="color: #aaa;">拼合后的海盗船将显示在这里</span>';
+            }
+        }
+        
+        function checkPuzzle() {
+            const resultDiv = document.getElementById('puzzleResult');
+            
+            const isAligned = 
+                piece1Rotation.horizontal % 360 === 0 && 
+                piece1Rotation.vertical % 360 === 0 &&
+                piece2Rotation.horizontal % 360 === 0 && 
+                piece2Rotation.vertical % 360 === 0;
+            
+            if (isAligned) {
+                resultDiv.innerHTML = '<p class="success-message">✓ 恭喜！拼图正确！海盗船图像已完整呈现，后面可以看到烟草的影子。</p>';
+                document.getElementById('collectBtn').style.display = 'inline-flex';
+                puzzleSolved = true;
+                
+                updateCombinedPreview();
+                
+                // 启动照片淡化效果
+                setTimeout(() => {
+                    fadeImageAndShowTobacco();
+                }, 1000);
+            } else {
+                resultDiv.innerHTML = '<p class="try-again-message">拼图尚未正确对齐，请继续调整角度。</p>';
+                puzzleSolved = false;
+            }
+        }
+        
+        // 照片淡化并显示烟叶效果
+        function fadeImageAndShowTobacco() {
+            const combinedImage = document.getElementById('combinedImage');
+            const tobaccoPattern = document.getElementById('tobaccoPattern');
+            
+            if (combinedImage && tobaccoPattern) {
+                // 添加淡化效果类
+                combinedImage.classList.add('fade-out');
+                tobaccoPattern.classList.add('fade-in');
+                
+                // 更新成功消息
+                setTimeout(() => {
+                    document.getElementById('puzzleResult').innerHTML = 
+                        '<p class="success-message">✓ 海盗船图像逐渐淡化，烟草的影子显现出来！</p>';
+                }, 1500);
+            }
+        }
+        
+        function resetPuzzle() {
+            piece1Rotation = {horizontal: 0, vertical: 0};
+            piece2Rotation = {horizontal: 0, vertical: 0};
+            
+            document.getElementById('piece1Img').style.transform = 'rotateX(0deg) rotateY(0deg)';
+            document.getElementById('piece2Img').style.transform = 'rotateX(0deg) rotateY(0deg)';
+            
+            document.getElementById('puzzleResult').innerHTML = '';
+            document.getElementById('collectBtn').style.display = 'none';
+            document.getElementById('combinedPuzzle').innerHTML = '<span style="color: #aaa;">拼合后的海盗船将显示在这里</span>';
+            puzzleSolved = false;
+        }
+        
+        function collectPuzzle() {
+            if (puzzleSolved) {
+                document.getElementById('collection3').classList.add('collected');
+                
+                document.getElementById('puzzleResult').innerHTML = 
+                    '<p class="success-message">海盗船拼图已收集！烟草影子也已记录。</p>';
+                
+                setTimeout(() => {
+                    closePuzzleModal();
+                }, 1500);
+            }
+        }
+        
+        window.onclick = function(event) {
+            const glassModal = document.getElementById('glassModal');
+            const puzzleModal = document.getElementById('puzzleModal');
+            
+            if (event.target === glassModal) {
+                closeGlassModal();
+            }
+            
+            if (event.target === puzzleModal) {
+                closePuzzleModal();
+            }
+        }
+        
+        window.onload = function() {
+            document.getElementById('collection1').classList.add('collected');
+        }
+    </script>
+</body>
+</html>

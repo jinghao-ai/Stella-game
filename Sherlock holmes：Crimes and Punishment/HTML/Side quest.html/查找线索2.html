@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>虚拟展品架 - 巨头鲸牙齿与鱼叉展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: 
+                /* 木板墙背景 */
+                repeating-linear-gradient(
+                    90deg,
+                    #8b4513 0px,
+                    #8b4513 100px,
+                    #a0522d 100px,
+                    #a0522d 120px
+                ),
+                /* 木板纹理叠加 */
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%235c4033' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            color: #f0e6d2;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 2px solid #8b4513;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: #d4af37;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        
+        .subtitle {
+            color: #e0c9a6;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+        }
+        
+        .display-section {
+            flex: 1;
+            min-width: 300px;
+            max-width: 550px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #d4af37;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #8b4513;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        /* 鲸鱼牙齿展示架样式 */
+        .display-stand {
+            background-color: #3a2c1f;
+            border-radius: 10px 10px 0 0;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+            border: 2px solid #5d4037;
+            border-bottom: none;
+        }
+        
+        .stand-top {
+            background-color: #5d4037;
+            height: 20px;
+            width: 100%;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        .teeth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            margin: 30px 0;
+            height: 400px;
+        }
+        
+        /* 鲸鱼牙齿模型容器 */
+        .whale-tooth-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+        }
+        
+        /* 牙齿底部的木板垫座 - 合并为一个并与展示架对称 */
+        .teeth-base-container {
+            width: 100%;
+            max-width: 520px;
+            height: 20px;
+            background: linear-gradient(to bottom, #8b4513 0%, #5d4037 100%);
+            border-radius: 0 0 5px 5px;
+            position: relative;
+            margin: 20px auto 0;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+        
+        /* 底座装饰木纹 */
+        .base-wood-grain {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+            border-radius: inherit;
+        }
+        
+        /* 鲸鱼牙齿模型 - 更细更长 */
+        .whale-tooth {
+            width: 30px; /* 更细的宽度 */
+            height: 380px; /* 更长的长度 */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: rotate(0deg) !important;
+        }
+        
+        /* 鲸鱼牙齿主体 - 浅白色 */
+        .whale-tooth-shape {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #f8f8f8 0%, #f0f0f0 20%, #e8e8e8 40%, #e0e0e0 60%, #d8d8d8 80%, #d0d0d0 100%);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            /* 顶端有细小弧度 */
+            clip-path: polygon(
+                0% 0%, 
+                100% 0%, 
+                100% 100%, 
+                85% 100%, 
+                50% 98%, 
+                15% 100%, 
+                0% 100%
+            );
+        }
+        
+        /* 牙齿尖端 - 特别细小的弧度 */
+        .tooth-tip {
+            position: absolute;
+            top: 0;
+            width: 5px; /* 特别细小的顶端 */
+            height: 15%;
+            background: linear-gradient(to bottom, #f8f8f8 0%, #e8e8e8 100%);
+            border-radius: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            /* 细小弧度曲线 */
+            border-top-left-radius: 90% 95%;
+            border-top-right-radius: 90% 95%;
+        }
+        
+        /* 牙齿表面自然纹理 */
+        .tooth-texture {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                /* 纵向生长纹 */
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 2px,
+                    rgba(200, 200, 200, 0.1) 2px,
+                    rgba(200, 200, 200, 0.1) 4px
+                ),
+                /* 横向生长纹 */
+                repeating-linear-gradient(
+                    0deg,
+                    transparent 0px,
+                    transparent 8px,
+                    rgba(180, 180, 180, 0.1) 8px,
+                    rgba(180, 180, 180, 0.1) 10px
+                ),
+                /* 渐变色泽变化 */
+                linear-gradient(
+                    45deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0) 20%,
+                    rgba(220, 220, 220, 0.1) 40%,
+                    rgba(200, 200, 200, 0.2) 60%,
+                    rgba(180, 180, 180, 0.1) 80%,
+                    rgba(255, 255, 255, 0.05) 100%
+                );
+            border-radius: inherit;
+        }
+        
+        /* 牙齿根部 */
+        .tooth-root {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(to top, #c9c9c9 0%, #b0b0b0 100%);
+            border-radius: 0 0 5px 5px;
+        }
+        
+        /* 牙齿根部的纹理 */
+        .root-texture {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(180, 180, 180, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(160, 160, 160, 0.5) 0%, transparent 50%);
+            border-radius: inherit;
+        }
+        
+        /* 牙齿光泽效果 */
+        .tooth-shine {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 30%;
+            height: 15%;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        .tooth-label {
+            position: absolute;
+            bottom: -35px;
+            width: 100%;
+            text-align: center;
+            color: #e0c9a6;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 8px 5px;
+            border-radius: 5px;
+            z-index: 3;
+        }
+        
+        /* 灰尘区域样式 */
+        .dust-area {
+            background-color: #2a2118;
+            height: 120px;
+            border-radius: 5px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            border: 1px dashed #8b4513;
+        }
+        
+        .dust-area:hover {
+            background-color: #3a2918;
+        }
+        
+        .dust {
+            position: absolute;
+            background-color: #8c7b6b;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        
+        .dust-1 { width: 30px; height: 30px; top: 20px; left: 20px; }
+        .dust-2 { width: 25px; height: 25px; top: 40px; left: 60px; }
+        .dust-3 { width: 35px; height: 35px; top: 10px; left: 120px; }
+        .dust-4 { width: 20px; height: 20px; top: 50px; left: 180px; }
+        .dust-5 { width: 40px; height: 40px; top: 30px; left: 240px; }
+        .dust-6 { width: 25px; height: 25px; top: 15px; left: 300px; }
+        .dust-7 { width: 30px; height: 30px; top: 60px; left: 350px; }
+        
+        .clean-button {
+            position: relative;
+            z-index: 2;
+            background-color: #8b4513;
+            color: #f0e6d2;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .clean-button:hover {
+            background-color: #a0522d;
+            transform: scale(1.05);
+        }
+        
+        /* 虚拟箱子样式 */
+        .virtual-chest {
+            width: 180px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8) 0%, rgba(160, 82, 45, 0.8) 100%);
+            border: 2px dashed #d4af37;
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pulse 2s infinite;
+        }
+        
+        .chest-lid {
+            width: 100%;
+            height: 10px;
+            background: rgba(212, 175, 55, 0.5);
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .chest-lock {
+            width: 20px;
+            height: 20px;
+            background: rgba(212, 175, 55, 0.9);
+            border-radius: 50%;
+            margin-top: 5px;
+        }
+        
+        .chest-label {
+            color: #d4af37;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        /* 鱼叉架样式 - 底部与展示架合并 */
+        .harpoon-stand {
+            background-color: #3a2c1f;
+            border-radius: 0 0 10px 10px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            min-height: 500px;
+            border: 2px solid #5d4037;
+            border-top: none;
+        }
+        
+        .stand-back {
+            background-color: #5d4037;
+            height: 320px;
+            width: 100%;
+            border-radius: 5px;
+            position: relative;
+            border: 2px solid #8b4513;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .harpoon-holder {
+            position: absolute;
+            width: 100%;
+            height: 33.33%;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .holder-top { top: 0; }
+        .holder-middle { top: 33.33%; border-top: 2px dashed #8d6e63; border-bottom: 2px dashed #8d6e63; }
+        .holder-bottom { top: 66.66%; }
+        
+        .holder-hook {
+            width: 30px;
+            height: 30px;
+            background-color: #8b4513;
+            border-radius: 50%;
+            margin-right: 20px;
+            border: 2px solid #d4af37;
+            position: relative;
+        }
+        
+        .holder-hook:after {
+            content: "";
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #5d4037;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .harpoon {
+            height: 12px;
+            background: linear-gradient(to right, #a8a8a8, #7a7a7a, #a8a8a8);
+            border-radius: 6px;
+            flex-grow: 1;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .harpoon-shaft {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 5px,
+                rgba(0, 0, 0, 0.2) 5px,
+                rgba(0, 0, 0, 0.2) 10px
+            );
+            border-radius: 6px;
+        }
+        
+        /* 鱼叉尖头在棍子头上 - 单个红箭头 */
+        .harpoon-tip {
+            position: absolute;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 25px solid #b22222;
+            filter: drop-shadow(2px 0 2px rgba(0, 0, 0, 0.5));
+        }
+        
+        .missing-harpoon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e74c3c;
+            font-style: italic;
+            flex-grow: 1;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            border: 1px dashed #e74c3c;
+        }
+        
+        .info-panel {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid #8b4513;
+        }
+        
+        .info-title {
+            color: #d4af37;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .info-text {
+            line-height: 1.6;
+            color: #e0c9a6;
+        }
+        
+        /* 新增：合并的底部棕色底座 */
+        .combined-base {
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to bottom, #a0522d 0%, #8b4513 20%, #5d4037 100%);
+            border-radius: 0 0 10px 10px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 底座木纹纹理 */
+        .combined-wood-grain {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 20px,
+                    rgba(0, 0, 0, 0.1) 20px,
+                    rgba(0, 0, 0, 0.1) 25px
+                );
+            border-radius: inherit;
+        }
+        
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #a8a8a8;
+            padding-top: 20px;
+            border-top: 1px solid #8b4513;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .display-section {
+                width: 100%;
+            }
+            
+            .teeth-container {
+                gap: 30px;
+                height: 400px;
+            }
+            
+            .whale-tooth {
+                width: 25px;
+                height: 320px;
+            }
+            
+            .teeth-base-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>虚拟展品架</h1>
+            <p class="subtitle">探索海洋珍品：巨头鲸牙齿与捕鲸鱼叉的历史</p>
+        </header>
+        
+        <div class="content">
+            <section class="display-section">
+                <div class="display-stand">
+                    <h2 class="section-title">巨头鲸牙齿展示架</h2>
+                    
+                    <div class="stand-top"></div>
+                    
+                    <div class="teeth-container">
+                        <div class="whale-tooth-container">
+                            <div class="whale-tooth">
+                                <div class="whale-tooth-shape">
+                                    <div class="tooth-texture"></div>
+                                    <div class="tooth-shine"></div>
+                                    <div class="tooth-tip"></div>
+                                    <div class="tooth-root">
+                                        <div class="root-texture"></div>
+                                    </div>
+                                </div>
+                                <div class="tooth-label">巨头鲸牙齿 #1</div>
+                            </div>
+                        </div>
+                        
+                        <div class="whale-tooth-container">
+                            <div class="whale-tooth">
+                                <div class="whale-tooth-shape">
+                                    <div class="tooth-texture"></div>
+                                    <div class="tooth-shine"></div>
+                                    <div class="tooth-tip"></div>
+                                    <div class="tooth-root">
+                                        <div class="root-texture"></div>
+                                    </div>
+                                </div>
+                                <div class="tooth-label">巨头鲸牙齿 #2</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 合并后的牙齿底座 - 与展示架对称 -->
+                    <div class="teeth-base-container">
+                        <div class="base-wood-grain"></div>
+                    </div>
+                    
+                    <div class="dust-area" id="dustArea">
+                        <button class="clean-button" id="cleanButton">点击清理灰尘</button>
+                        
+                        <div class="dust dust-1"></div>
+                        <div class="dust dust-2"></div>
+                        <div class="dust dust-3"></div>
+                        <div class="dust dust-4"></div>
+                        <div class="dust dust-5"></div>
+                        <div class="dust dust-6"></div>
+                        <div class="dust dust-7"></div>
+                        
+                        <div class="virtual-chest" id="virtualChest">
+                            <div class="chest-lid"></div>
+                            <div class="chest-lock"></div>
+                            <div class="chest-label">虚拟宝箱</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-panel">
+                    <h3 class="info-title">关于巨头鲸牙齿</h3>
+                    <p class="info-text">这是一对精美的巨头鲸牙齿模型，置于深棕色木质底座上。巨头鲸牙齿模型采用浅白色材质，表面有自然的生长纹理和色泽变化，形态优雅流畅。这些模型展示了巨头鲸牙齿特有的细长形状和优雅弧度，顶端有特别细小的大弧度。牙齿根部有细腻的纹理，整体呈现自然的浅白色渐变，真实还原了巨头鲸牙齿的特征。</p>
+                </div>
+            </section>
+            
+            <section class="display-section">
+                <div class="harpoon-stand">
+                    <h2 class="section-title">传统捕鲸鱼叉架</h2>
+                    
+                    <div class="stand-back">
+                        <div class="harpoon-holder holder-top">
+                            <div class="holder-hook"></div>
+                            <div class="harpoon">
+                                <div class="harpoon-shaft"></div>
+                                <div class="harpoon-tip"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="harpoon-holder holder-middle">
+                            <div class="holder-hook"></div>
+                            <div class="harpoon">
+                                <div class="harpoon-shaft"></div>
+                                <div class="harpoon-tip"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="harpoon-holder holder-bottom">
+                            <div class="holder-hook"></div>
+                            <div class="missing-harpoon">鱼叉缺失 (已出借展览)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-panel">
+                    <h3 class="info-title">关于捕鲸鱼叉</h3>
+                    <p class="info-text">这个鱼叉架展示了19世纪捕鲸业使用的传统鱼叉。鱼叉架共有三个位置，顶部和中部放置了完整的鱼叉，底部位置鱼叉目前出借给海洋历史博物馆展览。这些鱼叉曾用于北大西洋的捕鲸活动，是海洋历史的重要见证。鱼叉尖端由锻铁制成，带有倒刺设计，确保刺中后不易脱落。红色标头位于鱼叉棍子的头部，增加了视觉辨识度。</p>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 新增：合并的底部棕色底座 -->
+        <div class="combined-base">
+            <div class="combined-wood-grain"></div>
+        </div>
+        
+        <footer>
+            <p>虚拟海洋历史展览馆 | 交互式展示界面</p>
+            <p>© 2023 海洋文化遗产数字展示项目</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dustArea = document.getElementById('dustArea');
+            const cleanButton = document.getElementById('cleanButton');
+            const virtualChest = document.getElementById('virtualChest');
+            const dustParticles = document.querySelectorAll('.dust');
+            let isCleaned = false;
+            
+            // 清理灰尘功能
+            cleanButton.addEventListener('click', function() {
+                if (isCleaned) return;
+                
+                // 添加清理动画
+                dustArea.style.cursor = 'default';
+                cleanButton.textContent = '清理中...';
+                cleanButton.style.backgroundColor = '#2e8b57';
+                
+                // 灰尘逐渐消失
+                dustParticles.forEach((dust, index) => {
+                    setTimeout(() => {
+                        dust.style.opacity = '0';
+                        dust.style.transform = 'scale(0.5)';
+                    }, index * 100);
+                });
+                
+                // 显示虚拟箱子
+                setTimeout(() => {
+                    virtualChest.style.display = 'flex';
+                    // 隐藏"已清理"按钮
+                    setTimeout(() => {
+                        cleanButton.style.display = 'none';
+                    }, 500);
+                    
+                    // 箱子出现动画
+                    setTimeout(() => {
+                        virtualChest.style.transform = 'translateX(-50%) scale(1.1)';
+                        setTimeout(() => {
+                            virtualChest.style.transform = 'translateX(-50%) scale(1)';
+                        }, 200);
+                    }, 100);
+                    
+                    isCleaned = true;
+                }, 800);
+            });
+            
+            // 鼠标悬停在灰尘区域上的效果
+            dustArea.addEventListener('mouseenter', function() {
+                if (!isCleaned) {
+                    dustParticles.forEach(dust => {
+                        // 随机移动灰尘颗粒
+                        const randomX = Math.random() * 5 - 2.5;
+                        const randomY = Math.random() * 5 - 2.5;
+                        dust.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                    });
+                }
+            });
+            
+            dustArea.addEventListener('mouseleave', function() {
+                if (!isCleaned) {
+                    dustParticles.forEach(dust => {
+                        dust.style.transform = 'translate(0, 0)';
+                    });
+                }
+            });
+            
+            // 鱼叉悬停效果
+            const harpoons = document.querySelectorAll('.harpoon');
+            harpoons.forEach(harpoon => {
+                harpoon.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.filter = 'brightness(1.2)';
+                });
+                
+                harpoon.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.filter = 'brightness(1)';
+                });
+            });
+            
+            // 虚拟箱子点击效果
+            virtualChest.addEventListener('click', function() {
+                this.style.transform = 'translateX(-50%) scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = 'translateX(-50%) scale(1)';
+                }, 200);
+                
+                // 显示消息
+                alert("虚拟宝箱已解锁！您获得了海洋历史知识卡片：巨头鲸是齿鲸中体型最大的物种之一，其牙齿长度可达20-25厘米，呈圆锥形，表面有生长纹理。这些牙齿历史上曾被用于制作工艺品和工具。");
+            });
+        });
+    </script>
+</body>
+</html>

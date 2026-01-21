@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>血迹场景 - 道具收集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #2c3e50, #1a1a2e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #eee;
+            padding: 20px;
+        }
+        
+        .scene {
+            width: 800px;
+            height: 600px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 木子地面 - 条状纹理 */
+        .wooden-floor {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #8B4513;
+            background-image: 
+                linear-gradient(
+                    to bottom,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.2) 50%,
+                    transparent 100%
+                ),
+                linear-gradient(
+                    to right,
+                    #A0522D 0%,
+                    #8B4513 10%,
+                    #A0522D 20%,
+                    #8B4513 30%,
+                    #A0522D 40%,
+                    #8B4513 50%,
+                    #A0522D 60%,
+                    #8B4513 70%,
+                    #A0522D 80%,
+                    #8B4513 90%,
+                    #A0522D 100%
+                );
+            background-size: 100% 5px, 50px 100%;
+            background-blend-mode: multiply;
+        }
+        
+        .wood-grain {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(139, 69, 19, 0.2) 0%, 
+                rgba(160, 82, 45, 0.3) 50%, 
+                rgba(139, 69, 19, 0.2) 100%);
+        }
+        
+        /* 血迹 - 扩大一倍 */
+        .blood-pool {
+            position: absolute;
+            width: 600px; /* 扩大一倍 */
+            height: 400px; /* 扩大一倍 */
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(100, 0, 0, 0.8) 0%, 
+                rgba(80, 0, 0, 0.9) 30%, 
+                rgba(60, 0, 0, 0.7) 70%, 
+                transparent 100%);
+            filter: blur(12px); /* 增加模糊以适应更大尺寸 */
+            z-index: 2;
+        }
+        
+        .blood-drops {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .blood-drop {
+            position: absolute;
+            background-color: rgba(100, 0, 0, 0.7);
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+        
+        /* 道具样式 */
+        .prop {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            z-index: 10;
+        }
+        
+        .prop:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        }
+        
+        /* 日记本 */
+        .journal {
+            width: 120px;
+            height: 150px;
+            bottom: 150px;
+            right: 180px;
+            background: linear-gradient(to bottom, #8B0000, #660000);
+            border-radius: 5px 10px 10px 5px;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
+        }
+        
+        .journal-cover {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #8B0000 0%, #660000 100%);
+            border-radius: 5px 10px 10px 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .journal-spine {
+            position: absolute;
+            left: 0;
+            top: 10%;
+            width: 15px;
+            height: 80%;
+            background: linear-gradient(to right, #4a0000, #330000);
+        }
+        
+        .journal-title {
+            position: absolute;
+            top: 50%;
+            left: 25px;
+            transform: translateY(-50%);
+            color: #d4af37;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        
+        .journal-pages {
+            position: absolute;
+            right: 0;
+            top: 5%;
+            width: 85%;
+            height: 90%;
+            background-color: #f5f5dc;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        /* 折叠刀 */
+        .folding-knife {
+            width: 180px;
+            height: 30px;
+            bottom: 120px;
+            left: 180px;
+            transform: rotate(15deg);
+        }
+        
+        .knife-blade {
+            position: absolute;
+            width: 120px;
+            height: 30px;
+            left: 0;
+            background: linear-gradient(90deg, #a0a0a0, #d0d0d0);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 50%);
+        }
+        
+        /* S形刀刃 */
+        .s-blade {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #a0a0a0, #d0d0d0);
+            clip-path: polygon(
+                0% 0%, 
+                100% 0%, 
+                100% 100%, 
+                0% 100%,
+                0% 50%,
+                10% 40%,
+                20% 60%,
+                30% 30%,
+                40% 70%,
+                50% 40%,
+                60% 60%,
+                70% 30%,
+                80% 70%,
+                90% 40%,
+                100% 50%
+            );
+        }
+        
+        .knife-handle {
+            position: absolute;
+            width: 70px;
+            height: 40px;
+            right: 0;
+            top: -5px;
+            background: linear-gradient(90deg, #654321, #8B4513);
+            border-radius: 0 10px 10px 0;
+            box-shadow: inset 3px 0 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .handle-rivets {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .rivet {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #aaa, #666);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        /* 收集框 */
+        .collection-frame {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            height: 80px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+        }
+        
+        .collection-frame.active {
+            display: flex;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .collection-title {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #ffcc00;
+        }
+        
+        .collection-items {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .collection-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .collection-item img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        /* 收集指示 */
+        .collect-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+            display: none;
+        }
+        
+        .collect-hint.show {
+            display: block;
+        }
+        
+        /* 道具收集状态 */
+        .prop.collected {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        /* 完成提示 */
+        .completion-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 200;
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        .completion-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .completion-message h2 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+        }
+        
+        /* 动画 */
+        @keyframes pulse {
+            0% { border-color: rgba(255, 255, 255, 0.3); }
+            50% { border-color: rgba(255, 204, 0, 0.7); }
+            100% { border-color: rgba(255, 255, 255, 0.3); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 850px) {
+            .scene {
+                width: 95vw;
+                height: 500px;
+            }
+            
+            .journal {
+                right: 100px;
+            }
+            
+            .folding-knife {
+                left: 100px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .scene {
+                height: 400px;
+            }
+            
+            .journal {
+                width: 100px;
+                height: 130px;
+                right: 50px;
+            }
+            
+            .folding-knife {
+                width: 150px;
+                left: 50px;
+            }
+            
+            .collection-frame {
+                width: 150px;
+                height: 70px;
+            }
+            
+            .collection-title {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <!-- 木子地面 -->
+        <div class="wooden-floor">
+            <div class="wood-grain"></div>
+        </div>
+        
+        <!-- 血迹 -->
+        <div class="blood-pool">
+            <div class="blood-drops" id="bloodDrops"></div>
+        </div>
+        
+        <!-- 日记本道具 -->
+        <div class="prop journal" id="journal">
+            <div class="journal-cover">
+                <div class="journal-spine"></div>
+                <div class="journal-title">日记</div>
+                <div class="journal-pages"></div>
+            </div>
+        </div>
+        
+        <!-- 折叠刀道具 -->
+        <div class="prop folding-knife" id="knife">
+            <div class="knife-blade">
+                <div class="s-blade"></div>
+            </div>
+            <div class="knife-handle">
+                <div class="handle-rivets">
+                    <div class="rivet" style="left: 15px;"></div>
+                    <div class="rivet" style="left: 35px;"></div>
+                    <div class="rivet" style="right: 15px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 收集框 -->
+        <div class="collection-frame" id="collectionFrame">
+            <div class="collection-title">收集的物品</div>
+            <div class="collection-items">
+                <div class="collection-item" id="journalIcon">📓</div>
+                <div class="collection-item" id="knifeIcon">🔪</div>
+            </div>
+        </div>
+        
+        <!-- 收集提示 -->
+        <div class="collect-hint" id="collectHint">点击道具进行收集</div>
+        
+        <!-- 完成提示 -->
+        <div class="completion-message" id="completionMessage">
+            <h2>道具收集完成！</h2>
+            <p>日记本和折叠刀已成功收集。</p>
+            <p>这些道具将连接到游戏的主收集系统中。</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const journal = document.getElementById('journal');
+            const knife = document.getElementById('knife');
+            const collectionFrame = document.getElementById('collectionFrame');
+            const collectHint = document.getElementById('collectHint');
+            const completionMessage = document.getElementById('completionMessage');
+            const journalIcon = document.getElementById('journalIcon');
+            const knifeIcon = document.getElementById('knifeIcon');
+            const bloodDrops = document.getElementById('bloodDrops');
+            
+            // 生成随机血滴
+            function createBloodDrops() {
+                for (let i = 0; i < 40; i++) { // 增加血滴数量以适应更大的血迹范围
+                    const drop = document.createElement('div');
+                    drop.className = 'blood-drop';
+                    
+                    // 随机位置
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    
+                    // 随机大小
+                    const size = 5 + Math.random() * 20;
+                    
+                    drop.style.left = `${x}%`;
+                    drop.style.top = `${y}%`;
+                    drop.style.width = `${size}px`;
+                    drop.style.height = `${size}px`;
+                    
+                    bloodDrops.appendChild(drop);
+                }
+            }
+            
+            // 初始化血滴
+            createBloodDrops();
+            
+            // 道具收集状态
+            let journalCollected = false;
+            let knifeCollected = false;
+            let collectionActive = false;
+            
+            // 显示收集提示
+            function showCollectHint() {
+                collectHint.classList.add('show');
+                setTimeout(() => {
+                    collectHint.classList.remove('show');
+                }, 3000);
+            }
+            
+            // 显示收集框
+            function showCollectionFrame() {
+                if (!collectionActive) {
+                    collectionFrame.classList.add('active');
+                    collectionActive = true;
+                    
+                    // 5秒后自动隐藏收集框
+                    setTimeout(() => {
+                        collectionFrame.classList.remove('active');
+                        collectionActive = false;
+                    }, 5000);
+                }
+            }
+            
+            // 收集道具
+            function collectProp(propType) {
+                if (propType === 'journal' && !journalCollected) {
+                    journal.classList.add('collected');
+                    journalIcon.style.color = '#4CAF50';
+                    journalCollected = true;
+                } else if (propType === 'knife' && !knifeCollected) {
+                    knife.classList.add('collected');
+                    knifeIcon.style.color = '#4CAF50';
+                    knifeCollected = true;
+                }
+                
+                // 显示收集框
+                showCollectionFrame();
+                
+                // 检查是否全部收集完成
+                if (journalCollected && knifeCollected) {
+                    setTimeout(() => {
+                        completionMessage.classList.add('show');
+                    }, 1000);
+                }
+            }
+            
+            // 绑定事件
+            journal.addEventListener('click', () => collectProp('journal'));
+            knife.addEventListener('click', () => collectProp('knife'));
+            
+            // 初始显示提示
+            setTimeout(showCollectHint, 1000);
+            
+            // 添加键盘快捷键支持
+            document.addEventListener('keydown', function(event) {
+                // 按1键收集日记本
+                if (event.code === 'Digit1') {
+                    collectProp('journal');
+                }
+                
+                // 按2键收集折叠刀
+                if (event.code === 'Digit2') {
+                    collectProp('knife');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

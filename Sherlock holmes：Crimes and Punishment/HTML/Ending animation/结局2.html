@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市侦探 - 真相之光</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        #scene-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #0a0e29, #1a3a5f, #4a7ba6, #87ceeb);
+            z-index: 1;
+            animation: skyBrighten 15s ease-in-out forwards;
+        }
+        
+        @keyframes skyBrighten {
+            0% {
+                filter: brightness(0.3);
+            }
+            100% {
+                filter: brightness(1.4);
+            }
+        }
+        
+        .cityscape {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            z-index: 3;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .left-buildings, .right-buildings {
+            height: 100%;
+            width: 47.5%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .building {
+            position: absolute;
+            bottom: 0;
+            background: linear-gradient(to top, #0a0e29, #151a3c, #1e2448);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: transform 15s ease-out;
+            overflow: hidden;
+        }
+        
+        /* 左侧建筑 - 原有建筑 */
+        .building-1 { width: 60px; height: 280px; left: 10px; }
+        .building-2 { width: 80px; height: 320px; left: 80px; }
+        .building-3 { width: 50px; height: 250px; left: 170px; }
+        .building-4 { width: 70px; height: 300px; left: 230px; }
+        .building-5 { width: 90px; height: 350px; left: 310px; }
+        
+        /* 左侧新增建筑 */
+        .building-11 { width: 55px; height: 270px; left: 50px; }
+        .building-12 { width: 65px; height: 310px; left: 120px; }
+        .building-13 { width: 75px; height: 290px; left: 200px; }
+        .building-14 { width: 45px; height: 260px; left: 280px; }
+        
+        /* 右侧建筑 - 原有建筑 */
+        .building-6 { width: 70px; height: 290px; right: 10px; }
+        .building-7 { width: 60px; height: 270px; right: 90px; }
+        .building-8 { width: 80px; height: 330px; right: 160px; }
+        .building-9 { width: 50px; height: 240px; right: 250px; }
+        .building-10 { width: 90px; height: 360px; right: 310px; }
+        
+        /* 右侧新增建筑 */
+        .building-15 { width: 65px; height: 310px; right: 50px; }
+        .building-16 { width: 55px; height: 280px; right: 120px; }
+        .building-17 { width: 75px; height: 300px; right: 200px; }
+        .building-18 { width: 45px; height: 250px; right: 280px; }
+        
+        /* 建筑窗户 */
+        .building::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, transparent 40%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.1) 60%, transparent 60%),
+                linear-gradient(transparent 90%, rgba(255,255,255,0.1) 90%, rgba(255,255,255,0.1) 95%, transparent 95%);
+            background-size: 20px 20px;
+            opacity: 0.3;
+            z-index: 2;
+        }
+        
+        /* 建筑光照效果 */
+        .building::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,215,100,0.15), transparent);
+            opacity: 0;
+            transition: opacity 15s ease-out;
+            z-index: 1;
+        }
+        
+        .left-buildings .building::after {
+            background: linear-gradient(to right, rgba(255,215,100,0.15), transparent);
+        }
+        
+        .right-buildings .building::after {
+            background: linear-gradient(to left, rgba(255,215,100,0.15), transparent);
+        }
+        
+        .building.light-up::after {
+            opacity: 0.8;
+        }
+        
+        .center-space {
+            width: 5%;
+            height: 100%;
+        }
+        
+        /* 建筑阴影层次感 */
+        .building {
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.8),
+                0 5px 15px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+        
+        .sun {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffd764, #ff9900, #ff6600);
+            border-radius: 50%;
+            box-shadow: 0 0 80px 40px rgba(255, 215, 100, 0.6);
+            z-index: 2;
+            animation: sunrise 15s ease-out forwards;
+        }
+        
+        @keyframes sunrise {
+            0% {
+                bottom: -100px;
+                opacity: 0.2;
+                transform: translateX(-50%) scale(0.8);
+            }
+            100% {
+                bottom: 65%;
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+        
+        .sun-glow {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,215,100,0.4) 0%, rgba(255,180,50,0.2) 40%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+            animation: sunGlow 15s ease-out forwards;
+            filter: blur(20px);
+        }
+        
+        @keyframes sunGlow {
+            0% {
+                bottom: -100px;
+                opacity: 0.1;
+                transform: translateX(-50%) scale(0.8);
+            }
+            100% {
+                bottom: 65%;
+                opacity: 0.8;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+        
+        .detective-elements {
+            position: absolute;
+            bottom: 30%;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            z-index: 4;
+            opacity: 0;
+            animation: fadeInDetective 5s ease-in-out 12s forwards;
+        }
+        
+        @keyframes fadeInDetective {
+            0% { opacity: 0; }
+            100% { opacity: 0.7; }
+        }
+        
+        .magnifying-glass {
+            position: absolute;
+            left: 25%;
+            top: 50%;
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+        }
+        
+        .magnifying-glass::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.7);
+            transform: rotate(45deg);
+        }
+        
+        .footprints {
+            position: absolute;
+            left: 45%;
+            top: 60%;
+            width: 200px;
+            height: 50px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50"><path d="M10,40 Q20,20 40,40 T70,40 T100,40" stroke="rgba(255,255,255,0.5)" stroke-width="3" fill="none"/><path d="M50,10 Q60,30 80,10 T110,10 T140,10" stroke="rgba(255,255,255,0.5)" stroke-width="3" fill="none"/></svg>');
+            background-repeat: no-repeat;
+        }
+        
+        .notebook {
+            position: absolute;
+            right: 25%;
+            top: 40%;
+            width: 60px;
+            height: 80px;
+            background: rgba(200, 170, 120, 0.8);
+            border-radius: 5px;
+            transform: rotate(-5deg);
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .notebook::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            height: 15px;
+            background: rgba(180, 150, 100, 0.9);
+            border-radius: 2px;
+        }
+        
+        .clouds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            z-index: 2;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            filter: blur(8px);
+            opacity: 0.9;
+        }
+        
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            filter: blur(5px);
+        }
+        
+        .cloud::before {
+            width: 80%;
+            height: 80%;
+            top: -30%;
+            left: 10%;
+        }
+        
+        .cloud::after {
+            width: 60%;
+            height: 60%;
+            top: -20%;
+            right: 10%;
+        }
+        
+        .cloud:nth-child(1) {
+            width: 180px;
+            height: 80px;
+            top: 15%;
+            left: 5%;
+            animation: float 40s linear infinite;
+        }
+        
+        .cloud:nth-child(2) {
+            width: 220px;
+            height: 100px;
+            top: 25%;
+            left: 35%;
+            animation: float 50s linear infinite;
+            animation-delay: -5s;
+        }
+        
+        .cloud:nth-child(3) {
+            width: 160px;
+            height: 70px;
+            top: 10%;
+            left: 65%;
+            animation: float 45s linear infinite;
+            animation-delay: -10s;
+        }
+        
+        .cloud:nth-child(4) {
+            width: 200px;
+            height: 90px;
+            top: 30%;
+            left: 80%;
+            animation: float 55s linear infinite;
+            animation-delay: -15s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateX(-200px);
+            }
+            100% {
+                transform: translateX(calc(100vw + 200px));
+            }
+        }
+        
+        .credits-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            z-index: 20;
+            transform: translateY(100%);
+            animation: creditsRise 30s linear 15s forwards;
+        }
+        
+        @keyframes creditsRise {
+            0% {
+                transform: translateY(100%);
+            }
+            99% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+        }
+        
+        .credits {
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            color: #fff;
+            padding: 20px 0;
+        }
+        
+        .title {
+            font-size: 3.5rem;
+            color: #ffd764;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 215, 100, 0.7);
+        }
+        
+        .subtitle {
+            font-size: 2.2rem;
+            color: #a0d8a0;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+        
+        .role-group {
+            margin: 40px 0;
+        }
+        
+        .role-title {
+            font-size: 2.5rem;
+            color: #ffd764;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 215, 100, 0.5);
+        }
+        
+        .name {
+            font-size: 2rem;
+            margin: 15px 0;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+        
+        .final-text {
+            font-size: 2.2rem;
+            color: #a0d8a0;
+            margin: 30px 0;
+            font-style: italic;
+            line-height: 1.5;
+        }
+        
+        .final-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            z-index: 25;
+            pointer-events: auto;
+            animation: fadeInFinal 0.5s ease-in 45s forwards;
+        }
+        
+        @keyframes fadeInFinal {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        .final-logo {
+            font-size: 4.5rem;
+            color: #ffd764;
+            text-shadow: 0 0 20px rgba(255, 215, 100, 0.5);
+            margin-bottom: 30px;
+        }
+        
+        .final-logo small {
+            display: block;
+            font-size: 1.8rem;
+            margin-top: 30px;
+            color: #a0d8a0;
+        }
+        
+        .home-link {
+            display: inline-block;
+            color: #ffd764;
+            text-decoration: none;
+            font-size: 1.5rem;
+            padding: 12px 25px;
+            border: 1px solid #ffd764;
+            border-radius: 5px;
+            background: rgba(30, 90, 30, 0.7);
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        
+        .home-link:hover {
+            background: rgba(255, 215, 100, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .fade-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 60%, rgba(10, 14, 41, 0.8) 90%);
+            z-index: 15;
+        }
+        
+        /* 音乐控制面板样式 */
+        .music-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(20, 40, 60, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            border: 1px solid #ffd764;
+            box-shadow: 0 0 15px rgba(255, 215, 100, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .music-icon:hover {
+            background: rgba(30, 60, 90, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .music-icon i {
+            color: #ffd764;
+            font-size: 1.5rem;
+        }
+        
+        .music-panel {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            background: rgba(20, 40, 60, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #ffd764;
+            box-shadow: 0 0 15px rgba(255, 215, 100, 0.3);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .music-panel.active {
+            display: flex;
+        }
+        
+        .music-title {
+            color: #ffd764;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .file-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .file-input-label {
+            color: #a0d8a0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #music-file {
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            background: rgba(30, 90, 30, 0.5);
+            border: 1px solid #ffd764;
+            width: 100%;
+            font-size: 0.8rem;
+        }
+        
+        .music-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .music-btn {
+            background: rgba(30, 90, 30, 0.7);
+            color: #ffd764;
+            border: 1px solid #ffd764;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .music-btn:hover {
+            background: rgba(255, 215, 100, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .music-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .volume-icon {
+            color: #ffd764;
+            font-size: 1.2rem;
+        }
+        
+        .volume-slider {
+            flex: 1;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .volume-progress {
+            height: 100%;
+            width: 70%;
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+            border-radius: 10px;
+        }
+        
+        .volume-slider input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .track-info {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #a0d8a0;
+            min-height: 40px;
+        }
+        
+        .wave-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            margin: 5px 0;
+        }
+        
+        .wave-bar {
+            width: 3px;
+            height: 15px;
+            background: linear-gradient(to top, #ff9a9e, #fad0c4);
+            margin: 0 2px;
+            border-radius: 10px;
+            animation: wave 1.2s infinite ease-in-out;
+        }
+        
+        .wave-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .wave-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .wave-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        
+        .wave-bar:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes wave {
+            0%, 100% {
+                transform: scaleY(0.5);
+            }
+            50% {
+                transform: scaleY(1.5);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="scene-container">
+        <div class="sky"></div>
+        <div class="clouds">
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+        </div>
+        
+        <div class="sun-glow"></div>
+        <div class="sun"></div>
+        
+        <div class="detective-elements">
+            <div class="magnifying-glass"></div>
+            <div class="footprints"></div>
+            <div class="notebook"></div>
+        </div>
+        
+        <div class="cityscape">
+            <div class="left-buildings">
+                <!-- 原有左侧建筑 -->
+                <div class="building building-1"></div>
+                <div class="building building-2"></div>
+                <div class="building building-3"></div>
+                <div class="building building-4"></div>
+                <div class="building building-5"></div>
+                
+                <!-- 新增左侧建筑 -->
+                <div class="building building-11"></div>
+                <div class="building building-12"></div>
+                <div class="building building-13"></div>
+                <div class="building building-14"></div>
+            </div>
+            
+            <div class="center-space"></div>
+            
+            <div class="right-buildings">
+                <!-- 原有右侧建筑 -->
+                <div class="building building-6"></div>
+                <div class="building building-7"></div>
+                <div class="building building-8"></div>
+                <div class="building building-9"></div>
+                <div class="building building-10"></div>
+                
+                <!-- 新增右侧建筑 -->
+                <div class="building building-15"></div>
+                <div class="building building-16"></div>
+                <div class="building building-17"></div>
+                <div class="building building-18"></div>
+            </div>
+        </div>
+        <div class="fade-overlay"></div>
+        
+        <div class="credits-container">
+            <div class="credits" id="credits">
+                <h1 class="title">真相之光</h1>
+                <p class="subtitle">最终章：真相的代价</p>
+                
+                <div class="role-group">
+                    <h2 class="role-title">制作团队</h2>
+                    <p class="name">项目总监 · 监督：张景皓</p>
+                    <p class="name">游戏程序员：董泽权</p>
+                    <p class="name">对话文案：张景皓 董泽权</p>
+                    <p class="name">美术设计师：苗新田</p>
+                    <p class="name">构架师：靳译焜</p>
+                    <p class="name">测试游戏运行：陈一鸣</p>
+                    <p class="name">测试游戏运行：胡艺帆</p>
+                    <p class="name">音乐：张景皓</p>
+                </div>
+                
+                <div class="role-group">
+                    <h2 class="role-title">制作进行</h2>
+                    <p class="name">制作主任：张景皓</p>
+                    <p class="name">制作担当：董泽权</p>
+                    <p class="name">制作团队：STELLA</p>
+                </div>
+                
+                <div class="role-group">
+                    <h2 class="role-title">制作</h2>
+                    <p class="name">STELLA</p>
+                    <p class="name">Sherlock Holmes: Crime and Punishment</p>
+                </div>
+                
+                <p class="final-text">真相永远隐藏在表象之下...</p>
+                <p class="final-text">感谢您游玩体验《Sherlock Holmes: Crime and Punishment》</p>
+            </div>
+        </div>
+        
+        <div class="final-container">
+            <div class="final-logo">
+                真相之光
+                <small>感谢您的见证</small>
+            </div>
+            <a href="STELLA.html" class="home-link">返回主页</a>
+        </div>
+        
+        <!-- 音乐控制面板 -->
+        <div class="music-icon">
+            <i class="fas fa-music"></i>
+        </div>
+        
+        <div class="music-panel">
+            <div class="music-title">🎵 背景音乐控制</div>
+            
+            <div class="track-info">
+                <div class="track-title">选择音乐文件</div>
+                <div class="track-artist">点击下方按钮导入</div>
+            </div>
+            
+            <div class="wave-animation hidden">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+            
+            <div class="file-input-container">
+                <label for="music-file" class="file-input-label">
+                    <i class="fas fa-file-import"></i> 选择音乐文件
+                </label>
+                <input type="file" id="music-file" accept="audio/*">
+            </div>
+            
+            <div class="music-buttons">
+                <button id="play-btn" class="music-btn">
+                    <i class="fas fa-play"></i> 播放
+                </button>
+                <button id="pause-btn" class="music-btn" disabled>
+                    <i class="fas fa-pause"></i> 暂停
+                </button>
+            </div>
+            
+            <div class="volume-control">
+                <div class="volume-icon">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="volume-slider">
+                    <div class="volume-progress"></div>
+                    <input type="range" min="0" max="100" value="70" class="volume-range">
+                </div>
+            </div>
+        </div>
+        
+        <audio id="bg-music" loop>
+            您的浏览器不支持音频元素。
+        </audio>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playBtn = document.getElementById('play-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const bgMusic = document.getElementById('bg-music');
+            const musicFileInput = document.getElementById('music-file');
+            const finalContainer = document.querySelector('.final-container');
+            const buildings = document.querySelectorAll('.building');
+            const creditsContainer = document.querySelector('.credits-container');
+            const musicIcon = document.querySelector('.music-icon');
+            const musicPanel = document.querySelector('.music-panel');
+            const volumeSlider = document.querySelector('.volume-range');
+            const trackTitle = document.querySelector('.track-title');
+            const trackArtist = document.querySelector('.track-artist');
+            const waveAnimation = document.querySelector('.wave-animation');
+            
+            // 从本地存储加载音乐设置
+            const savedMusicUrl = localStorage.getItem('bgMusicUrl');
+            const savedMusicState = localStorage.getItem('bgMusicState');
+            
+            if (savedMusicUrl) {
+                bgMusic.src = savedMusicUrl;
+                if (savedMusicState === 'playing') {
+                    // 延迟播放以避免自动播放策略限制
+                    setTimeout(() => {
+                        bgMusic.play().catch(e => console.log("自动播放被阻止:", e));
+                    }, 1000);
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                } else {
+                    playBtn.disabled = false;
+                    pauseBtn.disabled = true;
+                }
+            } else {
+                // 初始状态：播放按钮可用，暂停按钮不可用
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+            }
+            
+            // 播放动画函数
+            function playAnimation() {
+                // 重置建筑光照
+                buildings.forEach(building => {
+                    building.classList.remove('light-up'); // 移除光照类，以便重新开始
+                });
+                
+                // 不移除建筑，只添加光照效果
+                setTimeout(() => {
+                    // 为所有建筑添加光照效果
+                    buildings.forEach(building => {
+                        building.classList.add('light-up');
+                    });
+                }, 1000); // 延迟1秒开始，与太阳升起同步
+                
+                finalContainer.style.opacity = '0';
+                
+                // 在演职员表动画结束时立即显示最终容器
+                setTimeout(() => {
+                    finalContainer.style.opacity = '1';
+                    creditsContainer.style.opacity = '0'; // 隐藏演职员表
+                }, 45000); // 15秒开始 + 30秒动画 = 45秒结束
+            }
+            
+            // 播放音乐函数
+            function playMusic() {
+                bgMusic.play().then(() => {
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                    // 保存播放状态到本地存储
+                    localStorage.setItem('bgMusicState', 'playing');
+                }).catch(e => {
+                    console.log("播放失败:", e);
+                    alert("无法播放音乐，请确保已选择有效的音乐文件");
+                });
+            }
+            
+            // 暂停音乐函数
+            function pauseMusic() {
+                bgMusic.pause();
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                // 保存播放状态到本地存储
+                localStorage.setItem('bgMusicState', 'paused');
+            }
+            
+            // 处理文件选择
+            musicFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const objectUrl = URL.createObjectURL(file);
+                    bgMusic.src = objectUrl;
+                    
+                    // 保存音乐URL到本地存储
+                    localStorage.setItem('bgMusicUrl', objectUrl);
+                    
+                    // 更新界面信息
+                    const fileName = file.name.replace(/\.[^/.]+$/, ""); // 移除文件扩展名
+                    trackTitle.textContent = fileName;
+                    trackArtist.textContent = '未知艺术家';
+                    
+                    // 自动播放新选择的音乐
+                    bgMusic.play().then(() => {
+                        playBtn.disabled = true;
+                        pauseBtn.disabled = false;
+                        localStorage.setItem('bgMusicState', 'playing');
+                    }).catch(e => {
+                        console.log("自动播放被阻止:", e);
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                    });
+                }
+            });
+            
+            // 设置音量
+            function setVolume() {
+                bgMusic.volume = volumeSlider.value / 100;
+                document.querySelector('.volume-progress').style.width = `${volumeSlider.value}%`;
+            }
+            
+            // 切换音乐面板显示
+            musicIcon.addEventListener('click', function() {
+                musicPanel.classList.toggle('active');
+            });
+            
+            // 音频事件监听
+            bgMusic.addEventListener('play', () => {
+                waveAnimation.classList.remove('hidden');
+            });
+            
+            bgMusic.addEventListener('pause', () => {
+                waveAnimation.classList.add('hidden');
+            });
+            
+            // 事件监听
+            playBtn.addEventListener('click', playMusic);
+            pauseBtn.addEventListener('click', pauseMusic);
+            volumeSlider.addEventListener('input', setVolume);
+            
+            // 初始化音量
+            setVolume();
+            
+            // 自动播放动画
+            setTimeout(playAnimation, 1000);
+        });
+    </script>
+</body>
+</html>

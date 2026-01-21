@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对峙小游戏 - 帕特里克·凯恩斯</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 1000px;
+            height: 600px;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+        }
+        
+        .game-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(60, 40, 20, 0.7), rgba(40, 25, 10, 0.9)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235d4037"/><path d="M0 0L100 100M100 0L0 100" stroke="%23442c15" stroke-width="1"/></svg>');
+            background-size: cover;
+            filter: blur(2px);
+            z-index: 1;
+        }
+        
+        .game-characters {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 100px;
+        }
+        
+        .character {
+            width: 200px;
+            height: 350px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .character-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .patrick {
+            background: linear-gradient(to bottom, #5d4037, #3e2723);
+        }
+        
+        .henry {
+            background: linear-gradient(to bottom, #4e342e, #2c1810);
+        }
+        
+        .game-ui {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .controls-top {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            background-color: rgba(30, 20, 10, 0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #5d4037;
+        }
+        
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .control-key {
+            background-color: #3e2723;
+            color: #d7ccc8;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #5d4037;
+            font-size: 14px;
+        }
+        
+        .control-desc {
+            font-size: 14px;
+            color: #d7ccc8;
+        }
+        
+        .player-name {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(30, 20, 10, 0.7);
+            padding: 5px 15px;
+            border-radius: 4px;
+            border: 1px solid #5d4037;
+            font-size: 16px;
+            color: #ffb74d;
+        }
+        
+        .stamina-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stamina-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#4caf50 0%, #4caf50 70%, #f44336 70%, #f44336 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .stamina-inner {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #3e2723;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d7ccc8;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .stamina-label {
+            color: #d7ccc8;
+            font-size: 16px;
+            background-color: rgba(30, 20, 10, 0.7);
+            padding: 5px 15px;
+            border-radius: 4px;
+            border: 1px solid #5d4037;
+        }
+        
+        .game-instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            text-align: center;
+            background-color: rgba(30, 20, 10, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #5d4037;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #d7ccc8;
+        }
+        
+        .action-buttons {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            pointer-events: auto;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            background: linear-gradient(to bottom, #5d4037, #3e2723);
+            color: #d7ccc8;
+            border: 1px solid #8d6e63;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            pointer-events: auto;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(to bottom, #6d4c41, #4e342e);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .expression-hint {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(30, 20, 10, 0.8);
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #5d4037;
+            font-size: 18px;
+            color: #ffb74d;
+            display: none;
+        }
+        
+        .expression-hint.show {
+            display: block;
+            animation: fadeInOut 2s ease-in-out;
+        }
+        
+        .ai-strategy {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background-color: rgba(30, 20, 10, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #5d4037;
+            font-size: 12px;
+            color: #d7ccc8;
+            max-width: 200px;
+        }
+        
+        .ai-info {
+            margin-bottom: 5px;
+        }
+        
+        .return-bar-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(to bottom, #5d4037, #3e2723);
+            color: #d7ccc8;
+            border: 1px solid #8d6e63;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            pointer-events: auto;
+            display: none;
+        }
+        
+        .return-bar-btn:hover {
+            background: linear-gradient(to bottom, #6d4c41, #4e342e);
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-background"></div>
+        
+        <div class="game-characters">
+            <div class="character patrick">
+                <img id="patrick-image" class="character-image" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='350' viewBox='0 0 200 350'><rect width='200' height='350' fill='%235d4037'/><text x='100' y='175' font-family='Arial' font-size='18' fill='white' text-anchor='middle'>帕特里克</text></svg>" alt="帕特里克">
+            </div>
+            
+            <div class="character henry">
+                <img id="henry-image" class="character-image" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='350' viewBox='0 0 200 350'><rect width='200' height='350' fill='%234e342e'/><text x='100' y='175' font-family='Arial' font-size='18' fill='white' text-anchor='middle'>亨利</text></svg>" alt="亨利">
+            </div>
+        </div>
+        
+        <div class="game-ui">
+            <div class="controls-top">
+                <div class="control-item">
+                    <div class="control-key">A键</div>
+                    <div class="control-desc">推</div>
+                </div>
+                <div class="control-item">
+                    <div class="control-key">D键</div>
+                    <div class="control-desc">挡</div>
+                </div>
+                <div class="control-item">
+                    <div class="control-key">Space</div>
+                    <div class="control-desc">空闲</div>
+                </div>
+                <div class="control-item">
+                    <div class="control-key">Esc</div>
+                    <div class="control-desc">退出</div>
+                </div>
+            </div>
+            
+            <div class="player-name">年青的亨利</div>
+            
+            <div class="ai-strategy">
+                <div class="ai-info">AI策略分析:</div>
+                <div id="ai-push-count">推: 0次</div>
+                <div id="ai-defend-count">挡: 0次</div>
+                <div id="ai-idle-count">空闲: 0次</div>
+                <div id="ai-pattern">当前模式: 随机</div>
+            </div>
+            
+            <div class="stamina-container">
+                <div class="stamina-circle">
+                    <div class="stamina-inner">70%</div>
+                </div>
+                <div class="stamina-label">耐力</div>
+            </div>
+            
+            <div class="game-instruction">
+                根据帕特里克的行动作出相应的反击。请注意你的耐力槽。
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn" id="push-btn">推 (A)</button>
+                <button class="action-btn" id="defend-btn">挡 (D)</button>
+                <button class="action-btn" id="idle-btn">空闲 (Space)</button>
+            </div>
+            
+            <button class="return-bar-btn" id="return-bar-btn">返回酒吧</button>
+            
+            <div class="expression-hint" id="expression-hint">帕特里克准备：推</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pushBtn = document.getElementById('push-btn');
+            const defendBtn = document.getElementById('defend-btn');
+            const idleBtn = document.getElementById('idle-btn');
+            const expressionHint = document.getElementById('expression-hint');
+            const staminaInner = document.querySelector('.stamina-inner');
+            const staminaCircle = document.querySelector('.stamina-circle');
+            const patrickImage = document.getElementById('patrick-image');
+            const henryImage = document.getElementById('henry-image');
+            const returnBarBtn = document.getElementById('return-bar-btn');
+            
+            // AI策略相关元素
+            const aiPushCount = document.getElementById('ai-push-count');
+            const aiDefendCount = document.getElementById('ai-defend-count');
+            const aiIdleCount = document.getElementById('ai-idle-count');
+            const aiPattern = document.getElementById('ai-pattern');
+            
+            let stamina = 70;
+            let patrickAction = '';
+            let gameInterval;
+            let gameEnded = false;
+            
+            // AI学习系统
+            let playerHistory = [];
+            const maxHistorySize = 10;
+            let aiStrategy = {
+                push: 0.33,    // 初始概率
+                defend: 0.33,
+                idle: 0.34,
+                pattern: '随机'
+            };
+            
+            // 玩家行为统计
+            let playerStats = {
+                push: 0,
+                defend: 0,
+                idle: 0
+            };
+
+            // 初始化游戏
+            function initGame() {
+                // 预加载角色图片
+                preloadCharacterImages();
+                startGameLoop();
+                
+                // 按钮事件
+                pushBtn.addEventListener('mousedown', function() {
+                    if (!gameEnded) handlePlayerAction('push');
+                });
+                
+                defendBtn.addEventListener('mousedown', function() {
+                    if (!gameEnded) handlePlayerAction('defend');
+                });
+                
+                idleBtn.addEventListener('mousedown', function() {
+                    if (!gameEnded) handlePlayerAction('idle');
+                });
+                
+                // 返回酒吧按钮事件
+                returnBarBtn.addEventListener('click', function() {
+                    // 这里可以添加返回酒吧的逻辑
+                    alert('返回酒吧场景');
+                    // 实际应用中可能是跳转页面或切换场景
+                });
+                
+                // 键盘事件
+                document.addEventListener('keydown', function(e) {
+                    if (gameEnded) return;
+                    
+                    if (e.key === 'a' || e.key === 'A') {
+                        handlePlayerAction('push');
+                    } else if (e.key === 'd' || e.key === 'D') {
+                        handlePlayerAction('defend');
+                    } else if (e.code === 'Space') {
+                        e.preventDefault();
+                        handlePlayerAction('idle');
+                    }
+                });
+            }
+            
+            // 预加载角色图片
+            function preloadCharacterImages() {
+                // 这里可以替换为实际的角色图片路径
+                console.log("角色图片已预加载");
+            }
+            
+            // 开始游戏循环
+            function startGameLoop() {
+                gameInterval = setInterval(function() {
+                    if (gameEnded) return;
+                    
+                    // 根据AI策略生成帕特里克的动作
+                    patrickAction = generatePatrickAction();
+                    
+                    // 显示动作提示
+                    expressionHint.textContent = `帕特里克准备：${getActionText(patrickAction)}`;
+                    expressionHint.classList.add('show');
+                    
+                    setTimeout(function() {
+                        expressionHint.classList.remove('show');
+                    }, 2000);
+                    
+                }, 3000);
+            }
+            
+            // 根据AI策略生成帕特里克的行动
+            function generatePatrickAction() {
+                const rand = Math.random();
+                let action;
+                
+                if (rand < aiStrategy.push) {
+                    action = 'push';
+                } else if (rand < aiStrategy.push + aiStrategy.defend) {
+                    action = 'defend';
+                } else {
+                    action = 'idle';
+                }
+                
+                return action;
+            }
+            
+            // 更新AI策略
+            function updateAIStrategy(playerAction) {
+                // 记录玩家行为
+                playerHistory.push(playerAction);
+                playerStats[playerAction]++;
+                
+                // 限制历史记录大小
+                if (playerHistory.length > maxHistorySize) {
+                    const removedAction = playerHistory.shift();
+                    playerStats[removedAction]--;
+                }
+                
+                // 分析玩家模式
+                analyzePlayerPattern();
+                
+                // 根据玩家模式调整AI策略
+                adjustAIStrategy();
+                
+                // 更新UI显示
+                updateAIInfo();
+            }
+            
+            // 分析玩家行为模式
+            function analyzePlayerPattern() {
+                const total = playerHistory.length;
+                if (total === 0) return;
+                
+                const pushRatio = playerStats.push / total;
+                const defendRatio = playerStats.defend / total;
+                const idleRatio = playerStats.idle / total;
+                
+                // 判断玩家模式
+                if (pushRatio > 0.6) {
+                    aiStrategy.pattern = '进攻型';
+                } else if (defendRatio > 0.6) {
+                    aiStrategy.pattern = '防御型';
+                } else if (idleRatio > 0.6) {
+                    aiStrategy.pattern = '保守型';
+                } else if (Math.abs(pushRatio - defendRatio) < 0.2) {
+                    aiStrategy.pattern = '平衡型';
+                } else {
+                    aiStrategy.pattern = '随机';
+                }
+            }
+            
+            // 调整AI策略
+            function adjustAIStrategy() {
+                const total = playerHistory.length;
+                if (total < 3) return; // 需要足够的数据
+                
+                const pushRatio = playerStats.push / total;
+                const defendRatio = playerStats.defend / total;
+                const idleRatio = playerStats.idle / total;
+                
+                // 根据玩家模式调整概率
+                if (aiStrategy.pattern === '进攻型') {
+                    // 对抗进攻型玩家：增加防御概率
+                    aiStrategy.defend = Math.min(0.6, pushRatio + 0.2);
+                    aiStrategy.push = (1 - aiStrategy.defend) * 0.4;
+                    aiStrategy.idle = (1 - aiStrategy.defend) * 0.6;
+                } else if (aiStrategy.pattern === '防御型') {
+                    // 对抗防御型玩家：增加空闲概率（诱导其进攻）
+                    aiStrategy.idle = Math.min(0.5, defendRatio + 0.2);
+                    aiStrategy.push = (1 - aiStrategy.idle) * 0.6;
+                    aiStrategy.defend = (1 - aiStrategy.idle) * 0.4;
+                } else if (aiStrategy.pattern === '保守型') {
+                    // 对抗保守型玩家：增加进攻概率
+                    aiStrategy.push = Math.min(0.6, idleRatio + 0.3);
+                    aiStrategy.defend = (1 - aiStrategy.push) * 0.3;
+                    aiStrategy.idle = (1 - aiStrategy.push) * 0.7;
+                } else {
+                    // 平衡或随机模式：保持相对平衡
+                    aiStrategy.push = 0.33;
+                    aiStrategy.defend = 0.33;
+                    aiStrategy.idle = 0.34;
+                }
+                
+                // 确保概率和为1
+                const sum = aiStrategy.push + aiStrategy.defend + aiStrategy.idle;
+                aiStrategy.push /= sum;
+                aiStrategy.defend /= sum;
+                aiStrategy.idle /= sum;
+            }
+            
+            // 更新AI信息显示
+            function updateAIInfo() {
+                aiPushCount.textContent = `推: ${playerStats.push}次`;
+                aiDefendCount.textContent = `挡: ${playerStats.defend}次`;
+                aiIdleCount.textContent = `空闲: ${playerStats.idle}次`;
+                aiPattern.textContent = `当前模式: ${aiStrategy.pattern}`;
+            }
+            
+            // 处理玩家动作
+            function handlePlayerAction(playerAction) {
+                // 更新AI策略
+                updateAIStrategy(playerAction);
+                
+                // 根据玩家动作和帕特里克动作判断结果
+                let staminaChange = 0;
+                let message = '';
+                
+                if (patrickAction === 'push') {
+                    if (playerAction === 'defend') {
+                        // 正确防御
+                        staminaChange = 5;
+                        message = '成功防御！';
+                    } else if (playerAction === 'push') {
+                        // 力量对抗
+                        staminaChange = -15;
+                        message = '力量对抗，消耗大量耐力！';
+                    } else {
+                        // 空闲时被推
+                        staminaChange = -20;
+                        message = '被推中，受到较大伤害！';
+                    }
+                } else if (patrickAction === 'defend') {
+                    if (playerAction === 'push') {
+                        // 正确攻击
+                        staminaChange = 5;
+                        message = '成功突破防御！';
+                    } else if (playerAction === 'defend') {
+                        // 双方防御
+                        staminaChange = -5;
+                        message = '双方防御，轻微消耗耐力';
+                    } else {
+                        // 空闲对防御
+                        staminaChange = 5;
+                        message = '休息恢复耐力';
+                    }
+                } else { // patrickAction === 'idle'
+                    if (playerAction === 'idle') {
+                        // 双方休息
+                        staminaChange = 10;
+                        message = '双方休息，恢复耐力';
+                    } else {
+                        // 攻击空闲的对手
+                        staminaChange = -10;
+                        message = '攻击落空，消耗耐力';
+                    }
+                }
+                
+                // 更新耐力
+                updateStamina(staminaChange);
+                
+                // 显示结果消息
+                showMessage(message);
+            }
+            
+            // 更新耐力
+            function updateStamina(change) {
+                stamina += change;
+                
+                // 限制耐力在0-100之间
+                stamina = Math.max(0, Math.min(100, stamina));
+                
+                // 更新UI
+                staminaInner.textContent = `${stamina}%`;
+                
+                // 更新圆形耐力条
+                const percentage = stamina;
+                if (percentage > 70) {
+                    staminaCircle.style.background = `conic-gradient(#4caf50 0%, #4caf50 ${percentage}%, #f44336 ${percentage}%, #f44336 100%)`;
+                } else if (percentage > 30) {
+                    staminaCircle.style.background = `conic-gradient(#ff9800 0%, #ff9800 ${percentage}%, #f44336 ${percentage}%, #f44336 100%)`;
+                } else {
+                    staminaCircle.style.background = `conic-gradient(#f44336 0%, #f44336 ${percentage}%, #f44336 ${percentage}%, #f44336 100%)`;
+                }
+                
+                // 检查游戏结束条件
+                if (stamina <= 0) {
+                    endGame(false);
+                } else if (stamina >= 100) {
+                    endGame(true);
+                }
+            }
+            
+            // 显示消息
+            function showMessage(message) {
+                const messageEl = document.createElement('div');
+                messageEl.textContent = message;
+                messageEl.style.position = 'absolute';
+                messageEl.style.top = '50%';
+                messageEl.style.left = '50%';
+                messageEl.style.transform = 'translate(-50%, -50%)';
+                messageEl.style.backgroundColor = 'rgba(30, 20, 10, 0.8)';
+                messageEl.style.color = '#ffb74d';
+                messageEl.style.padding = '10px 20px';
+                messageEl.style.borderRadius = '5px';
+                messageEl.style.border = '1px solid #5d4037';
+                messageEl.style.zIndex = '10';
+                messageEl.style.fontSize = '18px';
+                
+                document.querySelector('.game-container').appendChild(messageEl);
+                
+                setTimeout(function() {
+                    messageEl.remove();
+                }, 1500);
+            }
+            
+            // 结束游戏
+            function endGame(isWin) {
+                clearInterval(gameInterval);
+                gameEnded = true;
+                
+                const message = isWin ? '你赢了！耐力已满！' : '你输了！耐力耗尽！';
+                showMessage(message);
+                
+                // 显示返回酒吧按钮
+                setTimeout(function() {
+                    returnBarBtn.style.display = 'block';
+                }, 2000);
+            }
+            
+            // 获取动作文本
+            function getActionText(action) {
+                switch(action) {
+                    case 'push': return '推';
+                    case 'defend': return '挡';
+                    case 'idle': return '空闲';
+                    default: return '';
+                }
+            }
+            
+            // 初始化游戏
+            initGame();
+        });
+    </script>
+</body>
+</html>

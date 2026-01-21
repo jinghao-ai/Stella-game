@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收集物品 - 戒指与手帕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Georgia', '微软雅黑', serif;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f5eedf;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #8b4513;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .description {
+            color: #654321;
+            margin-bottom: 30px;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        
+        /* 木框背景样式 */
+        .wood-frame {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            height: 500px;
+            margin: 0 auto 40px;
+            background-image: 
+                linear-gradient(90deg, rgba(139, 69, 19, 0.1) 1px, transparent 1px),
+                linear-gradient(rgba(139, 69, 19, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-color: #deb887;
+            border: 20px solid #8b4513;
+            box-shadow: 
+                inset 0 0 20px rgba(101, 67, 33, 0.5),
+                0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        /* 木板纹路效果 */
+        .wood-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(101, 67, 33, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+        
+        /* 木框内部斜角效果 */
+        .wood-frame::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+        
+        /* 收集物品的样式 */
+        .collectible {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+        
+        .collectible:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        
+        /* 戒指样式 */
+        .ring {
+            top: 150px;
+            left: 200px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #d4af37 20%, #c19e36 70%);
+            border-radius: 50%;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 0 20px rgba(255, 223, 0, 0.4);
+            border: 8px solid #b8860b;
+        }
+        
+        .ring::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-color: #f5eedf;
+            border-radius: 50%;
+        }
+        
+        /* 手帕样式 */
+        .handkerchief {
+            top: 250px;
+            right: 180px;
+            width: 160px;
+            height: 120px;
+            background-color: #e6e6fa;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: rotate(-15deg);
+        }
+        
+        .handkerchief::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 40%, rgba(147, 112, 219, 0.2) 50%, transparent 60%),
+                repeating-linear-gradient(45deg, rgba(147, 112, 219, 0.1), rgba(147, 112, 219, 0.1) 5px, transparent 5px, transparent 10px);
+            border-radius: 5px;
+        }
+        
+        .handkerchief::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background-color: #9370db;
+            border-radius: 50%;
+        }
+        
+        /* 收集状态指示器 */
+        .collection-status {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background-color: rgba(139, 69, 19, 0.1);
+            border-radius: 8px;
+            border: 2px solid #8b4513;
+        }
+        
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+        
+        .ring-icon {
+            background-color: #d4af37;
+        }
+        
+        .handkerchief-icon {
+            background-color: #e6e6fa;
+        }
+        
+        .status-text {
+            font-weight: bold;
+            color: #654321;
+        }
+        
+        .collected {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        
+        /* 收集成功消息 */
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background-color: rgba(245, 238, 223, 0.95);
+            padding: 30px 50px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 3px solid #8b4513;
+            z-index: 100;
+            text-align: center;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .success-message.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .success-message h2 {
+            color: #8b4513;
+            margin-bottom: 15px;
+        }
+        
+        .success-message p {
+            color: #654321;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .success-message button {
+            background-color: #8b4513;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .success-message button:hover {
+            background-color: #654321;
+        }
+        
+        /* 完成状态 */
+        .completion-message {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(139, 69, 19, 0.1);
+            border-radius: 8px;
+            border: 2px solid #8b4513;
+            color: #654321;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .completion-message.show {
+            display: block;
+        }
+        
+        /* 收集数据展示 */
+        .collection-data {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(139, 69, 19, 0.1);
+            border-radius: 8px;
+            border: 2px dashed #8b4513;
+        }
+        
+        .collection-data h3 {
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+        
+        .collection-data p {
+            color: #654321;
+            font-family: monospace;
+            font-size: 16px;
+            word-break: break-all;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .wood-frame {
+                height: 400px;
+            }
+            
+            .ring {
+                top: 120px;
+                left: 100px;
+                width: 100px;
+                height: 100px;
+            }
+            
+            .handkerchief {
+                top: 200px;
+                right: 100px;
+                width: 140px;
+                height: 100px;
+            }
+            
+            .collection-status {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .wood-frame {
+                height: 300px;
+                border-width: 10px;
+            }
+            
+            .ring {
+                top: 80px;
+                left: 50px;
+                width: 80px;
+                height: 80px;
+                border-width: 5px;
+            }
+            
+            .ring::before {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .handkerchief {
+                top: 150px;
+                right: 50px;
+                width: 100px;
+                height: 80px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .description {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>收集物品：戒指与手帕</h1>
+        <p class="description">点击木框中的戒指和手帕进行收集。所有收集的物品会存储在一个对象中，方便连接到总收集系统。</p>
+        
+        <div class="collection-status">
+            <div class="status-item">
+                <div class="status-icon ring-icon"></div>
+                <span class="status-text" id="ring-status">戒指 (未收集)</span>
+            </div>
+            <div class="status-item">
+                <div class="status-icon handkerchief-icon"></div>
+                <span class="status-text" id="handkerchief-status">手帕 (未收集)</span>
+            </div>
+        </div>
+        
+        <div class="wood-frame" id="wood-frame">
+            <div class="collectible ring" id="ring" title="点击收集戒指"></div>
+            <div class="collectible handkerchief" id="handkerchief" title="点击收集手帕"></div>
+        </div>
+        
+        <div class="completion-message" id="completion-message">
+            恭喜！你已经收集了所有物品。收集数据如下：
+        </div>
+        
+        <div class="collection-data">
+            <h3>收集数据对象 (可连接到总收集系统):</h3>
+            <p id="collection-data">{"ring": false, "handkerchief": false}</p>
+        </div>
+    </div>
+    
+    <div class="success-message" id="success-message">
+        <h2>收集成功！</h2>
+        <p id="collected-item-name">物品已添加到你的收藏中。</p>
+        <button id="close-message">确定</button>
+    </div>
+    
+    <script>
+        // 收集状态对象 - 可以连接到总收集系统
+        const collectionState = {
+            ring: false,
+            handkerchief: false
+        };
+        
+        // DOM元素
+        const ring = document.getElementById('ring');
+        const handkerchief = document.getElementById('handkerchief');
+        const ringStatus = document.getElementById('ring-status');
+        const handkerchiefStatus = document.getElementById('handkerchief-status');
+        const successMessage = document.getElementById('success-message');
+        const collectedItemName = document.getElementById('collected-item-name');
+        const closeMessageBtn = document.getElementById('close-message');
+        const completionMessage = document.getElementById('completion-message');
+        const collectionData = document.getElementById('collection-data');
+        
+        // 更新收集数据展示
+        function updateCollectionData() {
+            collectionData.textContent = JSON.stringify(collectionState);
+        }
+        
+        // 检查是否所有物品都已收集
+        function checkCompletion() {
+            if (collectionState.ring && collectionState.handkerchief) {
+                completionMessage.classList.add('show');
+                completionMessage.innerHTML = `恭喜！你已经收集了所有物品。收集数据如下：<br><code>${JSON.stringify(collectionState)}</code>`;
+            }
+        }
+        
+        // 收集戒指
+        ring.addEventListener('click', function() {
+            if (collectionState.ring) return; // 如果已收集，不再重复收集
+            
+            // 更新状态
+            collectionState.ring = true;
+            ringStatus.textContent = "戒指 (已收集)";
+            ringStatus.classList.add('collected');
+            
+            // 显示成功消息
+            collectedItemName.textContent = "戒指已添加到你的收藏中。";
+            successMessage.classList.add('show');
+            
+            // 物品消失效果
+            this.style.opacity = '0';
+            this.style.transform = 'scale(0)';
+            
+            // 更新收集数据
+            updateCollectionData();
+            
+            // 检查是否完成收集
+            setTimeout(checkCompletion, 500);
+        });
+        
+        // 收集手帕
+        handkerchief.addEventListener('click', function() {
+            if (collectionState.handkerchief) return; // 如果已收集，不再重复收集
+            
+            // 更新状态
+            collectionState.handkerchief = true;
+            handkerchiefStatus.textContent = "手帕 (已收集)";
+            handkerchiefStatus.classList.add('collected');
+            
+            // 显示成功消息
+            collectedItemName.textContent = "手帕已添加到你的收藏中。";
+            successMessage.classList.add('show');
+            
+            // 物品消失效果
+            this.style.opacity = '0';
+            this.style.transform = 'scale(0)';
+            
+            // 更新收集数据
+            updateCollectionData();
+            
+            // 检查是否完成收集
+            setTimeout(checkCompletion, 500);
+        });
+        
+        // 关闭成功消息
+        closeMessageBtn.addEventListener('click', function() {
+            successMessage.classList.remove('show');
+        });
+        
+        // 初始更新收集数据
+        updateCollectionData();
+        
+        // 为总收集系统提供接口
+        // 这允许其他页面访问此页面的收集状态
+        window.getCollectionState = function() {
+            return collectionState;
+        };
+        
+        // 从外部设置收集状态（如果从总收集系统加载）
+        window.setCollectionState = function(state) {
+            if (state.ring) {
+                collectionState.ring = true;
+                ringStatus.textContent = "戒指 (已收集)";
+                ringStatus.classList.add('collected');
+                ring.style.opacity = '0';
+                ring.style.transform = 'scale(0)';
+            }
+            
+            if (state.handkerchief) {
+                collectionState.handkerchief = true;
+                handkerchiefStatus.textContent = "手帕 (已收集)";
+                handkerchiefStatus.classList.add('collected');
+                handkerchief.style.opacity = '0';
+                handkerchief.style.transform = 'scale(0)';
+            }
+            
+            updateCollectionData();
+            checkCompletion();
+        };
+    </script>
+</body>
+</html>

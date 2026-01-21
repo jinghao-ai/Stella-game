@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>罪与罚：福尔摩斯探案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #000;
+        }
+        
+        /* 屏幕容器 */
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        #screen1 {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="%23000"/><rect x="0" y="0" width="100%" height="100%" fill="%231a1a2e" opacity="0.8"/><rect x="0" y="0" width="100%" height="100%" fill="url(%23grain)" opacity="0.1"/><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><pattern id="grain" x="0" y="0" width="100%" height="100%"><rect x="0" y="0" width="100%" height="100%" filter="url(%23grain)"/></pattern></defs></svg>');
+            z-index: 1;
+        }
+        
+        /* 游戏标题样式 */
+        .game-title-main {
+            color: #c8a951;
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            letter-spacing: 3px;
+        }
+        
+        .game-subtitle-main {
+            color: #e74c3c;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            margin-bottom: 4rem;
+            letter-spacing: 2px;
+        }
+        
+        /* 游戏入口链接 */
+        .main-game-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #c8a951, #b8944f);
+            color: #1a1a2e;
+            text-decoration: none;
+            padding: 25px 60px;
+            border-radius: 15px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(200, 169, 81, 0.5);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 3rem;
+            min-width: 350px;
+        }
+        
+        .main-game-link:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(200, 169, 81, 0.7);
+            color: #0c0c1e;
+        }
+        
+        /* 游戏描述 */
+        .game-description {
+            max-width: 600px;
+            color: #bdc3c7;
+            font-size: 1.3rem;
+            line-height: 1.6;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            padding: 0 20px;
+        }
+        
+        /* 音乐控制按钮样式 */
+        .music-control-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid #c8a951;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .music-control-btn:hover {
+            background: rgba(200, 169, 81, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* 音乐控制面板 */
+        .music-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #c8a951;
+            border-radius: 10px;
+            padding: 15px;
+            width: 250px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .music-panel.active {
+            display: block;
+        }
+
+        .music-control {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .music-control-row {
+            display: flex;
+            gap: 5px;
+        }
+
+        .music-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #555;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .music-btn:hover {
+            background: rgba(200, 169, 81, 0.3);
+        }
+
+        .music-btn.active {
+            background: #c8a951;
+            color: black;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 6px;
+            background: #555;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #c8a951;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .volume-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: bold;
+            color: #c8a951;
+        }
+
+        .music-select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #555;
+            border-radius: 5px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .music-info {
+            color: #c8a951;
+            text-align: center;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 全局音乐播放器 -->
+    <audio id="global-music" loop style="display: none;"></audio>
+
+    <!-- 音乐控制按钮 -->
+    <div class="music-control-btn" id="music-toggle-btn">♪</div>
+
+    <!-- 音乐控制面板 -->
+    <div class="music-panel" id="music-panel">
+        <div class="music-control">
+            <select class="music-select" id="music-select">
+                <option value="none">无音乐</option>
+                <option value="music1">悬疑探案</option>
+                <option value="music2">古典推理</option>
+            </select>
+            
+            <div class="music-control-row">
+                <button class="music-btn" id="play-music">播放</button>
+                <button class="music-btn" id="stop-music">停止</button>
+            </div>
+            
+            <div class="music-info" id="current-music-info"></div>
+            
+            <div class="volume-control">
+                <span style="color: #ccc;">🔇</span>
+                <input type="range" class="volume-slider" id="music-volume-slider" 
+                       min="0" max="100" value="30">
+                <span style="color: #ccc;">🔊</span>
+                <span class="volume-value" id="music-volume-value">30%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 屏幕1：开始侦探游戏 -->
+    <div class="screen" id="screen1">
+        <h1 class="game-title-main">CRIMES AND<br>PUNISHMENTS</h1>
+        <h2 class="game-subtitle-main">SHERLOCK HOLMES</h2>
+        <a href="game-scene.html" class="main-game-link">开始侦探游戏</a>
+        <p class="game-description">
+            进入神秘的侦探世界，运用你的智慧和观察力，解开一个个离奇案件的谜团，找出真相！
+        </p>
+    </div>
+
+    <script>
+        // 全局音乐播放器
+        class GlobalMusicPlayer {
+            constructor() {
+                this.audio = document.getElementById('global-music');
+                this.currentMusic = null;
+                this.isPlaying = false;
+                this.volume = localStorage.getItem('music-volume') ? parseInt(localStorage.getItem('music-volume')) / 100 : 0.3;
+                
+                this.init();
+            }
+            
+            init() {
+                // 设置音量
+                this.audio.volume = this.volume;
+                
+                // 从localStorage加载音乐设置
+                this.loadMusicSettings();
+                
+                // 监听页面可见性变化
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.handlePageHide();
+                    } else {
+                        this.handlePageShow();
+                    }
+                });
+            }
+            
+            loadMusicSettings() {
+                const savedMusic = localStorage.getItem('background-music');
+                const savedVolume = localStorage.getItem('music-volume');
+                const savedPlaying = localStorage.getItem('music-playing');
+                
+                if (savedMusic && savedMusic !== 'none') {
+                    this.changeMusic(savedMusic);
+                    
+                    if (savedPlaying === 'true') {
+                        setTimeout(() => {
+                            this.play();
+                        }, 1000);
+                    }
+                }
+                
+                if (savedVolume) {
+                    this.setVolume(parseInt(savedVolume) / 100);
+                }
+            }
+            
+            changeMusic(musicType) {
+                if (this.currentMusic === musicType) return;
+                
+                this.currentMusic = musicType;
+                let musicUrl = '';
+                
+                if (musicType.startsWith('imported-')) {
+                    const importedMusic = JSON.parse(localStorage.getItem('importedMusic') || '[]');
+                    const index = parseInt(musicType.split('-')[1]);
+                    if (importedMusic[index]) {
+                        musicUrl = importedMusic[index].data;
+                    }
+                } else if (musicType === 'music1') {
+                    musicUrl = '../music/mystery-theme.mp3';
+                } else if (musicType === 'music2') {
+                    musicUrl = '../music/classical-deduction.mp3';
+                }
+                
+                if (musicUrl) {
+                    this.audio.src = musicUrl;
+                    this.audio.load();
+                    
+                    // 保存当前音乐状态
+                    this.saveMusicState();
+                    
+                    // 更新UI
+                    this.updateMusicInfo();
+                }
+            }
+            
+            play() {
+                if (this.currentMusic && this.currentMusic !== 'none') {
+                    this.audio.play().then(() => {
+                        this.isPlaying = true;
+                        localStorage.setItem('music-playing', 'true');
+                        this.updatePlayButton(true);
+                        this.updateMusicInfo('音乐播放中...');
+                    }).catch(error => {
+                        console.log('播放被阻止:', error);
+                        this.createPlayOverlay();
+                    });
+                }
+            }
+            
+            pause() {
+                this.audio.pause();
+                this.isPlaying = false;
+                localStorage.setItem('music-playing', 'false');
+                this.updatePlayButton(false);
+                this.updateMusicInfo('音乐已暂停');
+            }
+            
+            stop() {
+                this.audio.pause();
+                this.audio.currentTime = 0;
+                this.isPlaying = false;
+                localStorage.setItem('music-playing', 'false');
+                this.updatePlayButton(false);
+                this.updateMusicInfo('音乐已停止');
+            }
+            
+            setVolume(volume) {
+                this.volume = volume;
+                this.audio.volume = volume;
+                localStorage.setItem('music-volume', Math.round(volume * 100));
+                
+                // 更新音量显示
+                document.getElementById('music-volume-value').textContent = Math.round(volume * 100) + '%';
+                document.getElementById('music-volume-slider').value = Math.round(volume * 100);
+            }
+            
+            saveMusicState() {
+                localStorage.setItem('background-music', this.currentMusic);
+            }
+            
+            updatePlayButton(playing) {
+                const playBtn = document.getElementById('play-music');
+                if (playing) {
+                    playBtn.textContent = '暂停';
+                    playBtn.classList.add('active');
+                } else {
+                    playBtn.textContent = '播放';
+                    playBtn.classList.remove('active');
+                }
+            }
+            
+            updateMusicInfo(text = '') {
+                const infoElement = document.getElementById('current-music-info');
+                if (text) {
+                    infoElement.textContent = text;
+                } else {
+                    const musicName = this.getCurrentMusicName();
+                    infoElement.textContent = musicName ? `当前: ${musicName}` : '';
+                }
+            }
+            
+            getCurrentMusicName() {
+                switch(this.currentMusic) {
+                    case 'music1': return '悬疑探案';
+                    case 'music2': return '古典推理';
+                    case 'none': return '无音乐';
+                    default: 
+                        if (this.currentMusic && this.currentMusic.startsWith('imported-')) {
+                            const importedMusic = JSON.parse(localStorage.getItem('importedMusic') || '[]');
+                            const index = parseInt(this.currentMusic.split('-')[1]);
+                            return importedMusic[index] ? importedMusic[index].name : '导入音乐';
+                        }
+                        return '';
+                }
+            }
+            
+            createPlayOverlay() {
+                if (document.getElementById('global-music-overlay')) return;
+                
+                const overlay = document.createElement('div');
+                overlay.id = 'global-music-overlay';
+                overlay.innerHTML = `
+                    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                               background: rgba(0,0,0,0.7); display: flex; justify-content: center; 
+                               align-items: center; z-index: 10000; cursor: pointer;">
+                        <div style="background: rgba(0,0,0,0.9); padding: 30px; border-radius: 10px; 
+                                   border: 2px solid #c8a951; color: #c8a951; text-align: center;">
+                            <h3>点击启用背景音乐</h3>
+                            <p>为了获得完整的游戏体验，请点击此处启用背景音乐</p>
+                        </div>
+                    </div>
+                `;
+                
+                overlay.addEventListener('click', () => {
+                    this.play();
+                    document.body.removeChild(overlay);
+                });
+                
+                document.body.appendChild(overlay);
+            }
+            
+            handlePageHide() {
+                if (this.isPlaying) {
+                    localStorage.setItem('music-current-time', this.audio.currentTime);
+                }
+            }
+            
+            handlePageShow() {
+                const savedTime = localStorage.getItem('music-current-time');
+                if (savedTime && this.isPlaying) {
+                    this.audio.currentTime = parseFloat(savedTime);
+                }
+            }
+        }
+
+        // 初始化音乐系统
+        function initMusicSystem() {
+            window.globalMusicPlayer = new GlobalMusicPlayer();
+            
+            // 设置事件监听器
+            document.getElementById('music-toggle-btn').addEventListener('click', toggleMusicPanel);
+            document.getElementById('music-select').addEventListener('change', function() {
+                window.globalMusicPlayer.changeMusic(this.value);
+                if (this.value !== 'none') {
+                    setTimeout(() => {
+                        window.globalMusicPlayer.play();
+                    }, 500);
+                } else {
+                    window.globalMusicPlayer.stop();
+                }
+            });
+            
+            document.getElementById('play-music').addEventListener('click', function() {
+                if (window.globalMusicPlayer.isPlaying) {
+                    window.globalMusicPlayer.pause();
+                } else {
+                    window.globalMusicPlayer.play();
+                }
+            });
+            
+            document.getElementById('stop-music').addEventListener('click', function() {
+                window.globalMusicPlayer.stop();
+            });
+            
+            document.getElementById('music-volume-slider').addEventListener('input', function() {
+                window.globalMusicPlayer.setVolume(this.value / 100);
+            });
+            
+            // 点击页面其他区域关闭音乐面板
+            document.addEventListener('click', function(event) {
+                const musicPanel = document.getElementById('music-panel');
+                const musicBtn = document.getElementById('music-toggle-btn');
+                if (!musicPanel.contains(event.target) && !musicBtn.contains(event.target)) {
+                    musicPanel.classList.remove('active');
+                }
+            });
+        }
+
+        // 切换音乐面板显示
+        function toggleMusicPanel() {
+            document.getElementById('music-panel').classList.toggle('active');
+        }
+
+        // 页面加载时初始化音乐系统
+        document.addEventListener('DOMContentLoaded', function() {
+            initMusicSystem();
+            
+            // 加载导入的音乐
+            const savedImportedMusic = localStorage.getItem('importedMusic');
+            if (savedImportedMusic) {
+                const importedMusic = JSON.parse(savedImportedMusic);
+                const musicSelect = document.getElementById('music-select');
+                
+                // 清除之前添加的导入音乐选项
+                const existingImported = musicSelect.querySelectorAll('[data-imported="true"]');
+                existingImported.forEach(option => option.remove());
+                
+                // 添加导入的音乐选项
+                importedMusic.forEach((music, index) => {
+                    const option = document.createElement('option');
+                    option.value = `imported-${index}`;
+                    option.textContent = music.name;
+                    option.setAttribute('data-imported', 'true');
+                    musicSelect.appendChild(option);
+                });
+            }
+            
+            // 设置当前选择的音乐
+            const savedMusic = localStorage.getItem('background-music');
+            if (savedMusic) {
+                document.getElementById('music-select').value = savedMusic;
+            }
+            
+            // 设置音量
+            const savedVolume = localStorage.getItem('music-volume');
+            if (savedVolume) {
+                document.getElementById('music-volume-slider').value = savedVolume;
+                document.getElementById('music-volume-value').textContent = savedVolume + '%';
+            }
+        });
+    </script>
+</body>
+</html>
